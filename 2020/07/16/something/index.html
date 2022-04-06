@@ -1,34 +1,165 @@
-extends _partial/layout.pug
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 5.4.1"><meta name="theme" content="hexo-theme-yun"><title>浅谈call和apply与继承模式 | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="none" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.19/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"ZJX的小破站","version":"1.0.0","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="日常笔记call和applycall和apply的作用就是改变this的指向，区别就是传参列表不同 call和apply可以理解为用别人的函数实现自己的需求,call必须符合调用的函数的形参，不可删除形参 function a()&amp;#123; &amp;#125; a.call() &#x3D; a()  call和apply更多用于组装函数   由我来组成头部 call是把实参按照形参的个数传入，apply则是需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈call和apply与继承模式">
+<meta property="og:url" content="https://zzzjx0912.github.io/2020/07/16/something/index.html">
+<meta property="og:site_name" content="ZJX&#39;s Blog">
+<meta property="og:description" content="日常笔记call和applycall和apply的作用就是改变this的指向，区别就是传参列表不同 call和apply可以理解为用别人的函数实现自己的需求,call必须符合调用的函数的形参，不可删除形参 function a()&amp;#123; &amp;#125; a.call() &#x3D; a()  call和apply更多用于组装函数   由我来组成头部 call是把实参按照形参的个数传入，apply则是需">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-15T18:27:02.000Z">
+<meta property="article:modified_time" content="2020-09-24T13:24:51.000Z">
+<meta property="article:author" content="ZJX">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><a class="site-name" href="/about/site.html">ZJX's Blog</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">26</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">10</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%A5%E5%B8%B8%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">日常笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#call%E5%92%8Capply"><span class="toc-number">1.1.</span> <span class="toc-text">call和apply</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bind"><span class="toc-number">1.2.</span> <span class="toc-text">bind</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%A7%E6%89%BF%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">继承模式</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/07/16/something/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">浅谈call和apply与继承模式</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-07-16 02:27:02" itemprop="dateCreated datePublished" datetime="2020-07-16T02:27:02+08:00">2020-07-16</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-09-24 21:24:51" itemprop="dateModified" datetime="2020-09-24T21:24:51+08:00">2020-09-24</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/JavaScript/" style="--text-color:#F4DF4F"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h1 id="日常笔记"><a href="#日常笔记" class="headerlink" title="日常笔记"></a>日常笔记</h1><h2 id="call和apply"><a href="#call和apply" class="headerlink" title="call和apply"></a>call和apply</h2><p>call和apply的作用就是<strong>改变this的指向</strong>，区别就是<strong>传参列表不同</strong></p>
+<p>call和apply可以理解为<strong>用别人的函数实现自己的需求</strong>,call必须符合调用的函数的形参，不可删除形参</p>
+<pre><code class="javascript">function a()&#123;
+&#125;
+a.call() = a()
+</code></pre>
+<p>call和apply更多用于组装函数   <del>由我来组成头部</del></p>
+<p><strong>call是把实参按照形参的个数传入，apply则是需要传入一个数组arguments</strong></p>
+<p>call是按照形参个数传实参</p>
+<pre><code class="javascript">function Wheel(Wheelsize,style)&#123;
+    this.wheelsize = Wheelsize;
+    this.style = style
+&#125;
+function Sit(sitColor)&#123;
+    this.sitColor = sitColor;
+&#125;
+function Model(width,height,len)&#123;
+    this.width = width;
+    this.height = height;
+    this.len = len;
+&#125;
 
-block content
-  - var post = page
-  #post
-    article.post-block(itemscope, itemtype='https://schema.org/Article')
-      include _partial/post/post-schema.pug
-      if post.type
-        - post_type = getPropertyByType(post.type)
-      header.post-header
-        h1.post-title(itemprop='name headline', style=post.type ? `color: ${post_type.color}` : '')
-          if post.type
-            +icon(post_type.icon)
-          | #{post.title}
+function Car(Wheelsize,style,sitColor,width,height,len)&#123;
+    Wheel.call(this,Wheelsize,style);
+    Sit.call(this,sitColor);
+    Model.call(this,width,height,len);
+&#125;
 
-          if theme.post_edit.enable
-            include _partial/post/post-edit.pug
+var BMW = new Car(100,&quot;幻夜&quot;,black,100,100,100);
+</code></pre>
+<p>apply则是需要传入一个数组arguments</p>
+<pre><code class="javascript">function Wheel(Wheelsize,style)&#123;
+    this.wheelsize = Wheelsize;
+    this.style = style
+&#125;
+function Sit(sitColor)&#123;
+    this.sitColor = sitColor;
+&#125;
+function Model(width,height,len)&#123;
+    this.width = width;
+    this.height = height;
+    this.len = len;
+&#125;
 
-        include _partial/post/post-meta.pug
+function Car(Wheelsize,style,sitColor,width,height,len)&#123;
+    Wheel.call(this,[Wheelsize,style]);
+    Sit.call(this,[sitColor]);
+    Model.call(this,[width,height,len]);
+&#125;
 
-        if post.url
-          a.hty-button.hty-button--raised(href=url_for(post.url), style=`margin-top: 1rem;background-color:${post_type.color}`)=__('post.view_link')
-
-      section.post-body(itemprop='articleBody')
-        .post-content.markdown-body(style=`--smc-primary:${theme.colors.primary};`)!=post.content
-
-        if theme.reward.enable && page.reward !== false
-          include _partial/post/reward.pug
-
-        if theme.creative_commons.license && theme.creative_commons.post
-          include _partial/post/post-copyright.pug
-
-    if post.prev || post.next
-      include _partial/post/post-nav.pug
+var BMW = new Car(100,&quot;幻夜&quot;,black,100,100,100);
+</code></pre>
+<h2 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h2><p><code>bind</code>和<code>call</code>还有<code>apply</code>都是去重新定义this这个对象的。</p>
+<pre><code class="js">const name = &quot;小钟&quot;,age = 20;
+let obj = &#123;
+    name:&quot;小周&quot;,
+    objAge:this.age,
+    myFun:function()&#123;
+        console.log(this.name+&quot;年龄&quot;+this.age);
+    &#125;
+&#125;
+const db = &#123;
+    name:&quot;旭宇&quot;,
+    age:&quot;99&quot;
+&#125;
+obj.myFun.call(db);         //旭宇年龄99
+obj.myFun.apply(db);        //旭宇年龄99
+obj.myFun.bind(db)();       //旭宇年龄99
+</code></pre>
+<p>由上面例子可以看出来，除了调用bind方法后面多了一个（）外，结果返回跟apply和call都一致！</p>
+<p>由此得出结论，<code>bind</code>返回的是一个新的函数，必须得调用才会执行   </p>
+<p><code>bind()</code>最简单的用法是创建一个函数，使这个函数不论怎么调用都有同样的this值。常见的错误就像上面的例子一样，将方法从对象中拿出来，然后调用，并且希望this指向原来的对象。如果不做特殊处理，一般会丢失原来的对象。使用<code>bind()</code>方法能够很漂亮的解决这个问题：</p>
+<pre><code class="js">this.num = 9; 
+var mymodule = &#123;
+  num: 81,
+  getNum: function() &#123; return this.num; &#125;
+&#125;;
+module.getNum(); // 81
+var getNum = module.getNum;
+getNum(); // 9, 因为在这个例子中，&quot;this&quot;指向全局对象
+// 创建一个&#39;this&#39;绑定到module的函数
+var boundGetNum = getNum.bind(module);
+boundGetNum(); // 81
+</code></pre>
+<h2 id="继承模式"><a href="#继承模式" class="headerlink" title="继承模式"></a>继承模式</h2><p><strong>公有原型</strong></p>
+<p>最基础的继承是这样的,同一个原型被两个函数指向</p>
+<pre><code class="javascript">function Son()&#123;
+&#125;
+function Father()&#123;
+&#125;
+Son.prototype = Father.prototype;
+var son = new Son;
+var father = new Father;
+</code></pre>
+<p>模块化封装起来起来就是：</p>
+<pre><code class="javascript">function Son()&#123;
+&#125;
+function Father()&#123; 
+&#125;
+function inherit(Target, Origin)&#123;    
+    Target.prototype = Origin.prototype;
+&#125;
+inherit(Son, Father);
+var son = new Son;
+var father = new Father;
+</code></pre>
+<p>但这个有个不足就是，无法给单个被继承的函数的原型添加属性（因为指向同一个原型，一加属性就一起加）</p>
+<p>最终模式——<strong>圣杯模式</strong></p>
+<p>思路是：建立一个function F（）作为中间层，利用原型链的原理</p>
+<pre><code class="javascript">function Son()&#123;
+&#125;
+function Father()&#123; 
+&#125;
+function inherit(Target, Origin)&#123;    
+    function F()&#123;&#125;
+    F.prototype = Origin.prototype;
+    Target.prototype = new F(); //把Target函数的原型换成F，但是通过原型链的原理，Target函数的原型最终还是继承于Origin函数的原型，就可以解决公有原型继承的缺点。
+    Target.prototype.constructor = Target; //构造函数归位
+    Target.prototype.uber = Origin.prototype //声明超类（超级父级，究竟继承至谁）
+    //正常超类是写super，但是js里super是保留字，所以这里写uber
+&#125;
+inherit(Son, Father);
+var son = new Son();
+var father = new Father();
+</code></pre>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/07/16/something/" title="浅谈call和apply与继承模式">https://zzzjx0912.github.io/2020/07/16/something/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/08/30/ArrayLike/" rel="prev" title="类数组和arguments"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">类数组和arguments</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/07/06/proto/" rel="next" title="原型和原型链"><span class="post-nav-text">原型和原型链</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":"2zJk2CXTVrYxy5ED3pmT3WPF-gzGzoHsz","appKey":"mU8v1Gu5O47mDNpNxsjHt95U","placeholder":"写点啥呗~","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"meta":["nick","mail","link"],"lang":"zh-cn","emojiCDN":"//i0.hdslb.com/bfs/emote/","emojiMaps":{"tv_doge":"6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png","tv_亲亲":"a8111ad55953ef5e3be3327ef94eb4a39d535d06.png","tv_偷笑":"bb690d4107620f1c15cff29509db529a73aee261.png","tv_再见":"180129b8ea851044ce71caf55cc8ce44bd4a4fc8.png","tv_冷漠":"b9cbc755c2b3ee43be07ca13de84e5b699a3f101.png","tv_发怒":"34ba3cd204d5b05fec70ce08fa9fa0dd612409ff.png","tv_发财":"34db290afd2963723c6eb3c4560667db7253a21a.png","tv_可爱":"9e55fd9b500ac4b96613539f1ce2f9499e314ed9.png","tv_吐血":"09dd16a7aa59b77baa1155d47484409624470c77.png","tv_呆":"fe1179ebaa191569b0d31cecafe7a2cd1c951c9d.png","tv_呕吐":"9f996894a39e282ccf5e66856af49483f81870f3.png","tv_困":"241ee304e44c0af029adceb294399391e4737ef2.png","tv_坏笑":"1f0b87f731a671079842116e0991c91c2c88645a.png","tv_大佬":"093c1e2c490161aca397afc45573c877cdead616.png","tv_大哭":"23269aeb35f99daee28dda129676f6e9ea87934f.png","tv_委屈":"d04dba7b5465779e9755d2ab6f0a897b9b33bb77.png","tv_害羞":"a37683fb5642fa3ddfc7f4e5525fd13e42a2bdb1.png","tv_尴尬":"7cfa62dafc59798a3d3fb262d421eeeff166cfa4.png","tv_微笑":"70dc5c7b56f93eb61bddba11e28fb1d18fddcd4c.png","tv_思考":"90cf159733e558137ed20aa04d09964436f618a1.png","tv_惊吓":"0d15c7e2ee58e935adc6a7193ee042388adc22af.png"},"requiredFields":["nick","mail"],"el":"#valine-container"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.0.0</span></div><div class="live_time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-07-12T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

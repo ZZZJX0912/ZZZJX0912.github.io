@@ -1,34 +1,209 @@
-extends _partial/layout.pug
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 5.4.1"><meta name="theme" content="hexo-theme-yun"><title>packageManager | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="none" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.19/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"ZJX的小破站","version":"1.0.0","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="包管理器 lerna （用于项目分成多个项目包的时候，多包管理工具） rollup（模块捆绑工具） Rome（校验封装等统一独立工具为一体的工具） Snowpack（非捆绑，快速的包管理工具）  Lerna（用于管理多包的JS项目的工具）前情提要将大型代码库分成单独的独立版本化的软件包对于代码共享非常有用。但是，跨那么多存储库进行更改很麻烦且难以跟踪，并且跨存储库的测试变得非常复杂。 为了解决这些">
+<meta property="og:type" content="article">
+<meta property="og:title" content="packageManager">
+<meta property="og:url" content="https://zzzjx0912.github.io/2021/08/27/packageManager/index.html">
+<meta property="og:site_name" content="ZJX&#39;s Blog">
+<meta property="og:description" content="包管理器 lerna （用于项目分成多个项目包的时候，多包管理工具） rollup（模块捆绑工具） Rome（校验封装等统一独立工具为一体的工具） Snowpack（非捆绑，快速的包管理工具）  Lerna（用于管理多包的JS项目的工具）前情提要将大型代码库分成单独的独立版本化的软件包对于代码共享非常有用。但是，跨那么多存储库进行更改很麻烦且难以跟踪，并且跨存储库的测试变得非常复杂。 为了解决这些">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zzzjx0912.github.io/2021/08/27/packageManager/1.png">
+<meta property="article:published_time" content="2021-08-27T07:11:47.000Z">
+<meta property="article:modified_time" content="2021-08-27T07:20:03.000Z">
+<meta property="article:author" content="ZJX">
+<meta property="article:tag" content="前端工程化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zzzjx0912.github.io/2021/08/27/packageManager/1.png"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><a class="site-name" href="/about/site.html">ZJX's Blog</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">26</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">10</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">包管理器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lerna%EF%BC%88%E7%94%A8%E4%BA%8E%E7%AE%A1%E7%90%86%E5%A4%9A%E5%8C%85%E7%9A%84JS%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%B7%A5%E5%85%B7%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">Lerna（用于管理多包的JS项目的工具）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%83%85%E6%8F%90%E8%A6%81"><span class="toc-number">1.1.1.</span> <span class="toc-text">前情提要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA"><span class="toc-number">1.1.2.</span> <span class="toc-text">创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4"><span class="toc-number">1.1.3.</span> <span class="toc-text">指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lerna%E7%9A%84%E4%BE%9D%E8%B5%96%E6%8F%90%E5%8D%87%EF%BC%88%E2%80%93hoist%EF%BC%89"><span class="toc-number">1.1.4.</span> <span class="toc-text">Lerna的依赖提升（–hoist）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rollup-JS%E7%9A%84%E6%A8%A1%E5%9D%97%E6%8D%86%E7%BB%91%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.</span> <span class="toc-text">rollup(JS的模块捆绑工具)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%83%85%E6%8F%90%E8%A6%81-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">前情提要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8rollup"><span class="toc-number">1.2.3.</span> <span class="toc-text">为什么要使用rollup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tree-shaking"><span class="toc-number">1.2.4.</span> <span class="toc-text">Tree-shaking</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rome-%E5%A4%9A%E4%B8%AA%E7%8B%AC%E7%AB%8B%E6%A0%A1%E9%AA%8C%E6%96%87%E4%BB%B6%E7%9A%84%E5%B0%81%E8%A3%85"><span class="toc-number">1.3.</span> <span class="toc-text">Rome(多个独立校验文件的封装)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.3.1.</span> <span class="toc-text">是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%8B%E9%9A%86%EF%BC%88clone%EF%BC%89%E5%B9%B6%E6%9E%84%E5%BB%BA"><span class="toc-number">1.3.2.</span> <span class="toc-text">克隆（clone）并构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.</span> <span class="toc-text">相关命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Snowpack%EF%BC%88%E9%9D%9E%E6%8D%86%E7%BB%91%EF%BC%8C%E5%BC%80%E5%8F%91%E9%80%9F%E5%BA%A6%E5%BF%AB%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">Snowpack（非捆绑，开发速度快）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Snowpack%E6%98%AF%E5%95%A5%EF%BC%9F"><span class="toc-number">1.4.1.</span> <span class="toc-text">Snowpack是啥？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-number">1.4.2.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Snowpack%E6%98%AF%E6%80%8E%E4%B9%88%E8%BF%90%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-number">1.4.3.</span> <span class="toc-text">Snowpack是怎么运作的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-1"><span class="toc-number">1.4.4.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-number">1.4.5.</span> <span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8D%86%E7%BB%91%E5%BC%8F%E5%BC%80%E5%8F%91%E5%92%8C%E9%9D%9E%E6%8D%86%E7%BB%91%E5%BC%8F%E5%BC%80%E5%8F%91"><span class="toc-number">1.4.6.</span> <span class="toc-text">捆绑式开发和非捆绑式开发</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2021/08/27/packageManager/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">packageManager</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2021-08-27 15:11:47" itemprop="dateCreated datePublished" datetime="2021-08-27T15:11:47+08:00">2021-08-27</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">前端工程化</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h1 id="包管理器"><a href="#包管理器" class="headerlink" title="包管理器"></a>包管理器</h1><ul>
+<li>lerna （用于项目分成多个项目包的时候，多包管理工具）</li>
+<li>rollup（模块捆绑工具）</li>
+<li>Rome（校验封装等统一独立工具为一体的工具）</li>
+<li>Snowpack（非捆绑，快速的包管理工具）</li>
+</ul>
+<h2 id="Lerna（用于管理多包的JS项目的工具）"><a href="#Lerna（用于管理多包的JS项目的工具）" class="headerlink" title="Lerna（用于管理多包的JS项目的工具）"></a><a target="_blank" rel="noopener" href="https://lerna.js.org/">Lerna</a>（用于管理多包的JS项目的工具）</h2><h3 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h3><p>将大型代码库分成单独的独立版本化的软件包对于代码共享非常有用。但是，跨那么多存储库进行更改很麻烦且难以跟踪，并且跨存储库的测试变得非常复杂。</p>
+<p>为了解决这些（以及许多其他）问题，一些项目会将其代码库组织到多包存储库中。Babel，React，Angular，Ember，Meteor，Jest等项目以及其他许多项目都在单个存储库中开发了所有软件包。</p>
+<p>Lerna是一种工具，可以优化使用git和npm管理多包存储库的工作流程。</p>
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><pre><code class="shell">npm install --global lerna          //全局安装lerna
+git init lerna-repo &amp;&amp; cd lerna-repo     //创建并初始化lerna-repo，并进入该存储库目录
+lerna init        // 初始化或将现有的仓库升级成Lerna当前的版本
+</code></pre>
+<h3 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h3><pre><code class="shell">lerna bootstrap    //引导Lerna数据库中的数据包,安装它们的所有依赖性并链接任何交叉依赖性。
+</code></pre>
+<p><code>lerna bootstrap</code>这条指令十分重要，引导数据包后，它可以让你通过<code>require()</code>使用软件包名称，就好像这些数据包已经存在于你的<code>node_modules</code>一样</p>
+<pre><code class="shell">lerna import &lt;本地路径&gt;     //将本地路径中的包导入具有提交历史记录的 数据包/目录 中
+</code></pre>
+<pre><code class="shell">lerna publish     //创建一个新版本的已经更新的软件包，并更新git和npm上的所有软件包
 
-block content
-  - var post = page
-  #post
-    article.post-block(itemscope, itemtype='https://schema.org/Article')
-      include _partial/post/post-schema.pug
-      if post.type
-        - post_type = getPropertyByType(post.type)
-      header.post-header
-        h1.post-title(itemprop='name headline', style=post.type ? `color: ${post_type.color}` : '')
-          if post.type
-            +icon(post_type.icon)
-          | #{post.title}
+选项：
+--npm-tag[标签名]  //给这一次更新添加一个标签名并发布到npm上
+--canary          //创造一个快照
+--skip-git        //不运行任何git命令
+--force-publish [数据包名]  //强制发布指定的软件包（以逗号分隔）或用*使用于所有软件包（跳过git diff检查已更改的软件包）
+</code></pre>
+<pre><code class="shell">lerna changed  //检查有哪些软件包已经更改
+lerna diff [软件包名]  //比较所有的软件包或者单个软件包
+lerna run [脚本]   //运行每一个包中含有的这个脚本
+lerna ls     //列出当前lerna存储库中的所有公共软件包
+</code></pre>
+<p><strong>Lerna依赖是什么样的？</strong></p>
+<p>他结构十分的简单：</p>
+<pre><code class="text">my-lerna-repo/
+  package.json
+  packages/
+    package-1/
+      package.json
+    package-2/
+      package.json
+</code></pre>
+<p><strong>Lerna能做什么？</strong></p>
+<p>Lerna的特点主要突出在两个指令<code>lerna bootstrap</code>和<code>lerna publish</code>，前者把仓库中的依赖项链接在一起，后者有助于发布任何更新的软件包</p>
+<p><strong>Lerna不能做什么？</strong></p>
+<p>Lerna不是一个针对无服务器单机的部署工具，依赖提升可能会让可能与传统的无服务器的单机部署技术不兼容。</p>
+<h3 id="Lerna的依赖提升（–hoist）"><a href="#Lerna的依赖提升（–hoist）" class="headerlink" title="Lerna的依赖提升（–hoist）"></a>Lerna的<a target="_blank" rel="noopener" href="https://github.com/lerna/lerna/blob/master/doc/hoist.md">依赖提升</a>（–hoist）</h3><p>当将整个项目划分为多个NPM包时，这种组织改进通常是有代价的——各种包在其Package.json文件中通常有许多重复的依赖项，因此在各个node_module目录中有成百上千个重复的文件。 通过Lerna使管理由许多NPM包组成的项目变得更容易，Lerna可能会在不经意间加剧这个问题。</p>
+<p>幸运的是，Lerna还提供了一个特性来改善这种情况——Lerna可以通过将依赖项“提升”到最顶层的Lerna项目级node_module目录来减少开发和构建环境中大量包副本的时间和空间需求。</p>
+<p>–hoist在使用中应该是透明的，这是一种运行时优化，理想情况下不需要对项目进行任何其他修改。 使用–hoist标志时</p>
+<ul>
+<li><p>共同的依赖项就只安装到顶级的node_module，并从各个包node_module中省略</p>
+</li>
+<li><p>大多数常见的依赖项仍然会被提升，但是本地的node_module包还是会得到一个正常的，安装着必要的依赖项</p>
+</li>
+<li><p>在这个情况中，无论客户机配置如何，<code>Lerna bootstrap</code>都会始终使用带有<code>--global-style</code>标志的<code>npm install</code>。</p>
+</li>
+<li><p>这些通用软件包中的二进制文件被符号链接到各个软件包<code>node_modules/.bin</code>目录，因此<code>package.json</code> 脚本可以不修改地继续工作。</p>
+</li>
+<li><p>行为良好的基于Node的软件应继续工作，无需修改。</p>
+</li>
+</ul>
+<h2 id="rollup-JS的模块捆绑工具"><a href="#rollup-JS的模块捆绑工具" class="headerlink" title="rollup(JS的模块捆绑工具)"></a><a target="_blank" rel="noopener" href="https://rollupjs.org/guide/en/">rollup</a>(JS的模块捆绑工具)</h2><h3 id="前情提要-1"><a href="#前情提要-1" class="headerlink" title="前情提要"></a>前情提要</h3><p>Rollup是JavaScript的模块捆绑器，它将小段代码编译成更大更复杂的东西，如库或应用程序。 它对JavaScript的ES6修订版中包含的代码模块使用新的标准化格式，而不是以前的特殊解决方案，如CommonJS和AMD。 ES模块允许您自由、无缝地组合您喜爱的库中最有用的单个函数。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code class="shell">npm install --global rollup
+</code></pre>
+<p>这些命令假定应用程序的入口点名为main.js，并且您希望所有导入都被编译到一个名为bundle.js的文件中。</p>
+<p>对于浏览器：</p>
+<pre><code class="shell">＃编译为包含自执行功能
+汇总的&lt;script&gt; main.js --format iife --name “ myBundle ” --file bundle.js
+</code></pre>
+<p>对于Node.js：</p>
+<pre><code class="shell">＃编译为CommonJS模块
+汇总main.js --format cjs --file bundle.js
+</code></pre>
+<p>对于浏览器和Node.js：</p>
+<pre><code class="shell">＃ UMD格式需要一个包名称
+汇总main.js --format UMD --name “ myBundle ” --file bundle.js
+</code></pre>
+<h3 id="为什么要使用rollup"><a href="#为什么要使用rollup" class="headerlink" title="为什么要使用rollup"></a>为什么要使用rollup</h3><p>如果将项目拆分成更小的独立部分，开发软件通常会更容易，因为这通常会消除意外的交互，并极大地降低需要解决的问题的复杂性，而简单地编写较小的项目并不一定就是解决问题的办法。 遗憾的是，JavaScript在历史上并没有将此功能作为核心功能包含在语言中。</p>
+<p>最终由于JavaScript中的ES模块支持而发生了变化，JavaScript提供了用于导入和导出函数和数据的语法，以便可以在单独的脚本之间共享它们。现在，该规范已在所有主要浏览器中以及在“ .mjs”文件的–experimental-modules标志后面的Node.js中实现。汇总允许您使用此模块系统编写代码，或者输出优化的ES模块以供在这些本机环境中使用，或者将其编译回现有支持的格式，例如CommonJS模块，AMD模块和IIFE样式的脚本。</p>
+<h3 id="Tree-shaking"><a href="#Tree-shaking" class="headerlink" title="Tree-shaking"></a>Tree-shaking</h3><p>除了支持使用ES模块之外，汇总还可以静态分析您要导入的代码，并将排除任何未实际使用的内容。这使您可以在现有工具和模块的基础上进行构建，而无需增加额外的依赖关系或增加项目的规模。</p>
+<p>例如，对于CommonJS，<em>必须导入整个工具或库</em>。</p>
+<pre><code class="js">// import the entire utils object with CommonJS
+const utils = require( &#39;./utils&#39; );
+const query = &#39;Rollup&#39;;
+// use the ajax method of the utils object
+utils.ajax(`https://api.example.com?search=$&#123;query&#125;`).then(handleResponse);
+</code></pre>
+<p>使用ES模块，无需导入整个<code>utils</code>对象，而只需导入所需的一个<code>ajax</code>功能：</p>
+<pre><code class="js">// import the ajax function with an ES6 import statement
+import &#123; ajax &#125; from &#39;./utils&#39;;
+const query = &#39;Rollup&#39;;
+// call the ajax function
+ajax(`https://api.example.com?search=$&#123;query&#125;`).then(handleResponse);
+</code></pre>
+<p>因为汇总包括最低限度的内容，所以它可以使库和应用程序更轻，更快，更简单。由于此方法可以利用显式<code>import</code>和<code>export</code>语句，因此它比简单地运行自动缩小器来检测已编译输出代码中未使用的变量要有效。</p>
+<h2 id="Rome-多个独立校验文件的封装"><a href="#Rome-多个独立校验文件的封装" class="headerlink" title="Rome(多个独立校验文件的封装)"></a><a target="_blank" rel="noopener" href="https://www.romejs.cn/docs/introduction/installation/">Rome</a>(多个独立校验文件的封装)</h2><h3 id="是什么？"><a href="#是什么？" class="headerlink" title="是什么？"></a>是什么？</h3><p>Rome是JavaScript、TypeScript、JSON、HTML、Markdown和CSS的链接器、编译器、绑定器等。</p>
+<p>Rome被设计用来取代Babel, ESLint, webpack, Prettier, Jest等。</p>
+<p>Rome统一了以前是独立工具的功能。在共享的基础上构建允许我们提供处理代码、显示错误、并行工作、缓存和配置的内聚体验。</p>
+<p>Rome是用TypeScript编写的，运行在Node.js上。罗马没有任何依赖性，而且很大程度上是从零开始编写的。</p>
+<h3 id="克隆（clone）并构建"><a href="#克隆（clone）并构建" class="headerlink" title="克隆（clone）并构建"></a>克隆（clone）并构建</h3><p>Rome 目前无法通过 <code>npm</code> 安装，必须从 GitHub 上下载源码才能安装。 选择一个空目录，然后克隆 <code>rome</code> 源码仓库：</p>
+<pre><code class="shell">git clone https://github.com/romejs/rome
+</code></pre>
+<p>然后，进入该目录并构建 <code>rome</code>：</p>
+<pre><code class="shell">cd rome; ./scripts/build-release dist
+</code></pre>
+<p>在 Windows 10 系统上，请在 PowerShell 7 中运行如下命令：</p>
+<pre><code class="shell">cd rome &amp;&amp; node scripts/build-release dist
+</code></pre>
+<p>然后，将 <code>rome</code> 安装到全局环境：</p>
+<pre><code class="shell">npm install -g ./dist/
+</code></pre>
+<h3 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h3><ul>
+<li><code>rome run</code>命令将运行传递过来的任何文件。 将此命令作用于你的项目的主文件，例如：</li>
+</ul>
+<pre><code class="shell">rome run index.js
+</code></pre>
+<ul>
+<li><code>rome lint</code>命令将使用一组默认的 lints 来检测某个文件并显示诊断信息。 不带任何参数运行此命令时，将对当前项目中的所有 JavaScript 文件做代码检测。例如：</li>
+</ul>
+<pre><code class="shell">rome lint file.js
+</code></pre>
+<ul>
+<li><p><code>rome compile</code>命令将使用一组默认转换（transforms）来编译文件。目前此命令没有用于指定转换子集（subset of transforms）的参数。</p>
+</li>
+<li><p><code>rome parse</code>命令将解析文件并输出格式美观的抽象语法树（AST）。</p>
+</li>
+</ul>
+<pre><code class="shell">rome parse file.js
+</code></pre>
+<h2 id="Snowpack（非捆绑，开发速度快）"><a href="#Snowpack（非捆绑，开发速度快）" class="headerlink" title="Snowpack（非捆绑，开发速度快）"></a><a target="_blank" rel="noopener" href="https://www.snowpack.dev/#key-features">Snowpack</a>（非捆绑，开发速度快）</h2><h3 id="Snowpack是啥？"><a href="#Snowpack是啥？" class="headerlink" title="Snowpack是啥？"></a>Snowpack是啥？</h3><p>Snowpack是一个用于更快web开发的现代前端构建工具。它<strong>取代了开发工作流中更重、更复杂的包(如webpack或Parcel)。</strong></p>
+<p>Snowpack利用JavaScript的本机模块系统(称为ESM)创建了第一个从不两次构建相同文件的构建系统。Snowpack立即将更改推送到浏览器，节省了您在传统上等待bundler的开发时间。</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>使用<strong>50毫秒或更短时间内</strong>启动的开发服务器，开发速度更快<strong>。</strong></li>
+<li>查看更改<strong>立即反映在浏览器中</strong>。</li>
+<li>集成您最喜欢的捆绑器，以优化生产。</li>
+<li>享受对TypeScript，JSX，CSS模块等的现成支持</li>
+<li>将您喜欢的工具与第三方插件连接。</li>
+</ul>
+<h3 id="Snowpack是怎么运作的？"><a href="#Snowpack是怎么运作的？" class="headerlink" title="Snowpack是怎么运作的？"></a>Snowpack是怎么运作的？</h3><p>Snowpack是一款用于更快web开发的现代轻量级构建工具。</p>
+<p>传统的JavaScript构建工具如<code>webpack</code>和<code>Parcel</code>需要在<strong>每次保存单个文件时重建和重新打包整个应用程序块</strong>。这个重新绑定的步骤会在点击保存更改和在浏览器中看到它们之间产生延迟。（<strong>捆绑</strong>）</p>
+<p>Snowpack在开发期间为您的应用程序提供解捆绑服务。每个文件只需要构建一次，然后被<strong>永久缓存</strong>。当一个文件发生变化时，Snowpack会重新构建这个文件。重新打包每一项更改不需要浪费时间，只需在浏览器中进行即时更新(通过<strong>热模块</strong>替换(HMR)速度更快)。（<strong>非捆绑</strong>）</p>
+<p>Snowpack的非捆绑开发仍然支持与您习惯用于生产的相同的捆绑构建。当你要构建你的产品应用程序时，你可以通过官方的Webpack或Rollup插件(即将推出)插入你最喜欢的打包。由于Snowpack已经可以处理您的构建，所以不需要复杂的打包配置。</p>
+<p>Snowpack实现了两全其美:在捆绑的产品构建中实现了<strong>性能优化的快速、非捆绑开发</strong>。</p>
+<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><pre><code class="shell">#使用 npm
+npm install --save-dev snowpack
+#使用 yarn
+yarn add --dev snowpack
+</code></pre>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><pre><code class="shell">#启动dev服务器，在本地加载站点
+snowpack dev
+#构建用于生产的站点
+snowpack build
+#构建站点，监控文件系统，并在文件更改时重建(适合本地开发)
+snowpack build --watch
+</code></pre>
+<h3 id="捆绑式开发和非捆绑式开发"><a href="#捆绑式开发和非捆绑式开发" class="headerlink" title="捆绑式开发和非捆绑式开发"></a>捆绑式开发和非捆绑式开发</h3><img src="/2021/08/27/packageManager/1.png" class="" width="1" loading="lazy">
 
-          if theme.post_edit.enable
-            include _partial/post/post-edit.pug
-
-        include _partial/post/post-meta.pug
-
-        if post.url
-          a.hty-button.hty-button--raised(href=url_for(post.url), style=`margin-top: 1rem;background-color:${post_type.color}`)=__('post.view_link')
-
-      section.post-body(itemprop='articleBody')
-        .post-content.markdown-body(style=`--smc-primary:${theme.colors.primary};`)!=post.content
-
-        if theme.reward.enable && page.reward !== false
-          include _partial/post/reward.pug
-
-        if theme.creative_commons.license && theme.creative_commons.post
-          include _partial/post/post-copyright.pug
-
-    if post.prev || post.next
-      include _partial/post/post-nav.pug
+<p><strong>非捆绑开发</strong>是在<strong>开发</strong>过程中将单个文件传送到浏览器的想法。仍然可以使用您喜欢的工具（例如Babel，TypeScript，Sass）来构建文件，然后借助ESM<code>import</code>和<code>export</code>语法将它们与依赖项分别加载到浏览器中。每当您更改文件时，Snowpack都只需要重建当前这个文件就可以了。（翻译一下就是：哪里改动重新构建哪个文件）</p>
+<p>替代方法是<strong>捆绑开发。</strong>如今，几乎所有流行的JavaScript构建工具都将重点放在捆绑开发上。通过捆绑程序运行整个应用程序会给开发工作流程带来额外的工作和复杂性，由于ESM得到了广泛的支持，因此这是不必要的。必须将所有更改（每次保存）与应用程序的其余部分重新捆绑在一起，然后更改才能在浏览器中反映出来。（翻译一下就是：一旦有一个地方改动，要整个程序进行重新构建）</p>
+<p>与传统的捆绑开发方法相比，非捆绑开发具有多个优点：</p>
+<ul>
+<li>单文件构建速度很快。</li>
+<li>单文件构建是确定性的。</li>
+<li>单文件版本更易于调试。</li>
+<li>项目规模不会影响开发速度。</li>
+<li>单个文件缓存更好。</li>
+</ul>
+<p>最后一点很关键：<strong>每个文件都是单独构建的并无限期地缓存。</strong>您的开发环境将永远不会多次构建文件，浏览器也不会下载两次文件（直到更改）。这是非捆绑式开发的真正力量。</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2021/08/27/packageManager/" title="packageManager">https://zzzjx0912.github.io/2021/08/27/packageManager/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2021/08/27/webSocket/" rel="prev" title="webSocket"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">webSocket</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/08/27/webAudio/" rel="next" title="webAudio"><span class="post-nav-text">webAudio</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":"2zJk2CXTVrYxy5ED3pmT3WPF-gzGzoHsz","appKey":"mU8v1Gu5O47mDNpNxsjHt95U","placeholder":"写点啥呗~","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"meta":["nick","mail","link"],"lang":"zh-cn","emojiCDN":"//i0.hdslb.com/bfs/emote/","emojiMaps":{"tv_doge":"6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png","tv_亲亲":"a8111ad55953ef5e3be3327ef94eb4a39d535d06.png","tv_偷笑":"bb690d4107620f1c15cff29509db529a73aee261.png","tv_再见":"180129b8ea851044ce71caf55cc8ce44bd4a4fc8.png","tv_冷漠":"b9cbc755c2b3ee43be07ca13de84e5b699a3f101.png","tv_发怒":"34ba3cd204d5b05fec70ce08fa9fa0dd612409ff.png","tv_发财":"34db290afd2963723c6eb3c4560667db7253a21a.png","tv_可爱":"9e55fd9b500ac4b96613539f1ce2f9499e314ed9.png","tv_吐血":"09dd16a7aa59b77baa1155d47484409624470c77.png","tv_呆":"fe1179ebaa191569b0d31cecafe7a2cd1c951c9d.png","tv_呕吐":"9f996894a39e282ccf5e66856af49483f81870f3.png","tv_困":"241ee304e44c0af029adceb294399391e4737ef2.png","tv_坏笑":"1f0b87f731a671079842116e0991c91c2c88645a.png","tv_大佬":"093c1e2c490161aca397afc45573c877cdead616.png","tv_大哭":"23269aeb35f99daee28dda129676f6e9ea87934f.png","tv_委屈":"d04dba7b5465779e9755d2ab6f0a897b9b33bb77.png","tv_害羞":"a37683fb5642fa3ddfc7f4e5525fd13e42a2bdb1.png","tv_尴尬":"7cfa62dafc59798a3d3fb262d421eeeff166cfa4.png","tv_微笑":"70dc5c7b56f93eb61bddba11e28fb1d18fddcd4c.png","tv_思考":"90cf159733e558137ed20aa04d09964436f618a1.png","tv_惊吓":"0d15c7e2ee58e935adc6a7193ee042388adc22af.png"},"requiredFields":["nick","mail"],"el":"#valine-container"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.0.0</span></div><div class="live_time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-07-12T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

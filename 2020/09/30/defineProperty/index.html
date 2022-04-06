@@ -1,34 +1,156 @@
-extends _partial/layout.pug
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 5.4.1"><meta name="theme" content="hexo-theme-yun"><title>Obect.defineProperty | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="none" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.19/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"ZJX的小破站","version":"1.0.0","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="最近准备系统性的学Vue，但是在学习响应式原理的时候被一个知识点卡住了，那就是Object.defineProperty 什么是Object.defineProperty?是一种用来设定修改对象上属性的“设定”，然后返回对象的静态方法 语法Object.defineProperty(obj, prop, descriptor)  obj：修改的对象 prop：要修改的对象的属性（string） d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Obect.defineProperty">
+<meta property="og:url" content="https://zzzjx0912.github.io/2020/09/30/defineProperty/index.html">
+<meta property="og:site_name" content="ZJX&#39;s Blog">
+<meta property="og:description" content="最近准备系统性的学Vue，但是在学习响应式原理的时候被一个知识点卡住了，那就是Object.defineProperty 什么是Object.defineProperty?是一种用来设定修改对象上属性的“设定”，然后返回对象的静态方法 语法Object.defineProperty(obj, prop, descriptor)  obj：修改的对象 prop：要修改的对象的属性（string） d">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/09/30/defineProperty/mix.png">
+<meta property="og:image" content="c:/Users/ZJX/AppData/Roaming/Typora/typora-user-images/image-20210120141816958.png">
+<meta property="article:published_time" content="2020-09-30T15:57:00.000Z">
+<meta property="article:modified_time" content="2021-01-20T09:20:28.000Z">
+<meta property="article:author" content="ZJX">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zzzjx0912.github.io/2020/09/30/defineProperty/mix.png"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><a class="site-name" href="/about/site.html">ZJX's Blog</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">26</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">10</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFObject-defineProperty"><span class="toc-number">1.</span> <span class="toc-text">什么是Object.defineProperty?</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">1.0.0.0.1.</span> <span class="toc-text">语法</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">作用？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">3.</span> <span class="toc-text">描述符</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#configurable"><span class="toc-number">3.1.</span> <span class="toc-text">configurable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#writable"><span class="toc-number">3.2.</span> <span class="toc-text">writable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#enumerable"><span class="toc-number">3.3.</span> <span class="toc-text">enumerable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#value"><span class="toc-number">3.4.</span> <span class="toc-text">value</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#get"><span class="toc-number">3.5.</span> <span class="toc-text">get</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#set"><span class="toc-number">3.6.</span> <span class="toc-text">set</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E6%B7%B7%E5%90%88%E4%BD%BF%E7%94%A8"><span class="toc-number">3.7.</span> <span class="toc-text">描述符的混合使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%BA%E9%99%B7"><span class="toc-number">3.8.</span> <span class="toc-text">缺陷</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E8%83%BD%E7%9B%91%E5%90%AC%E6%95%B0%E7%BB%84%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-number">3.8.0.1.</span> <span class="toc-text">不能监听数组的变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%85%E9%A1%BB%E9%81%8D%E5%8E%86%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%AF%8F%E4%B8%AA%E5%B1%9E%E6%80%A7"><span class="toc-number">3.8.0.2.</span> <span class="toc-text">必须遍历对象的每个属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%85%E9%A1%BB%E6%B7%B1%E5%B1%82%E9%81%8D%E5%8E%86%E5%B5%8C%E5%A5%97%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.8.0.3.</span> <span class="toc-text">必须深层遍历嵌套的对象</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Proxy"><span class="toc-number">4.</span> <span class="toc-text">Proxy</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/09/30/defineProperty/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Obect.defineProperty</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-09-30 23:57:00" itemprop="dateCreated datePublished" datetime="2020-09-30T23:57:00+08:00">2020-09-30</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2021-01-20 17:20:28" itemprop="dateModified" datetime="2021-01-20T17:20:28+08:00">2021-01-20</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/JavaScript/" style="--text-color:#F4DF4F"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><p>最近准备系统性的学Vue，但是在学习响应式原理的时候被一个知识点卡住了，那就是<strong>Object.defineProperty</strong></p>
+<h1 id="什么是Object-defineProperty"><a href="#什么是Object-defineProperty" class="headerlink" title="什么是Object.defineProperty?"></a>什么是Object.defineProperty?</h1><p>是一种用来设定修改对象上属性的“设定”，然后返回对象的静态方法</p>
+<h5 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h5><pre><code class="js">Object.defineProperty(obj, prop, descriptor)
+</code></pre>
+<p>obj：修改的对象</p>
+<p>prop：要修改的对象的属性（string）</p>
+<p>descriptor：定义或修改的属性的描述符。（obj）</p>
+<p>return：传递给函数的对象。</p>
+<h1 id="作用？"><a href="#作用？" class="headerlink" title="作用？"></a>作用？</h1><p>此方法可以精确地添加或修改对象上的属性。这些属性的值可以更改，并且可以删除。此方法允许将这些额外的详细信息从其默认值更改。默认情况下，使用添加的值<code>Object.defineProperty()</code>是不可变的且不可枚举。</p>
+<p>可以控制属性是否可枚举（for-in的时候是否被遍历到），可以控制属性时候可修改，是否可删除（<code>delete</code>），还可以给赋值和取值时调用函数…</p>
+<h1 id="描述符"><a href="#描述符" class="headerlink" title="描述符"></a>描述符</h1><h2 id="configurable"><a href="#configurable" class="headerlink" title="configurable"></a>configurable</h2><p><code>true</code>是否可以<strong>更改此属性描述符的类型</strong>，以及是否可以从相应对象中删除该属性。<br><strong>默认为<code>false</code>。</strong></p>
+<p>这个描述符得和<code>delete</code>一起理解</p>
+<pre><code class="js">var person = &#123;age : 28, title : &#39;fe&#39;&#125;;
+delete person.age; // true
+delete person[&#39;title&#39;]; // true
+person.age; // undefined
+delete person.age; // true 即使删除了也会返回true，delete的返回值true只是说明这个对象已经没有这个属性了
 
-block content
-  - var post = page
-  #post
-    article.post-block(itemscope, itemtype='https://schema.org/Article')
-      include _partial/post/post-schema.pug
-      if post.type
-        - post_type = getPropertyByType(post.type)
-      header.post-header
-        h1.post-title(itemprop='name headline', style=post.type ? `color: ${post_type.color}` : '')
-          if post.type
-            +icon(post_type.icon)
-          | #{post.title}
+delete Object.prototype; // false 不能删除原型上的属性
 
-          if theme.post_edit.enable
-            include _partial/post/post-edit.pug
+//Object.getOwnPropertyDescriptor返回该属性描述符的描述信息
+var descriptor = Object.getOwnPropertyDescriptor(Object,&#39;prototype&#39;);  
 
-        include _partial/post/post-meta.pug
+descriptor.configurable; // false 对象的原型不可删除
 
-        if post.url
-          a.hty-button.hty-button--raised(href=url_for(post.url), style=`margin-top: 1rem;background-color:${post_type.color}`)=__('post.view_link')
+Object.defineProperty(person,&quot;sex&quot;,&#123;configurable: false,value:&quot;male&quot;&#125;) //&#123;sex: &quot;male&quot;&#125;
+delete person.sex //false(由于设定了不可修改，所以不可删除，delete时会返回false)
+</code></pre>
+<h2 id="writable"><a href="#writable" class="headerlink" title="writable"></a>writable</h2><p><code>true</code> 如果与属性相关的值可以用赋值运算符（obj.XX = XXX 这种叫赋值运算）改变。<br><strong>默认为<code>false</code>。</strong></p>
+<pre><code class="js">const person = &#123;age : 18, sex : &quot;male&quot;&#125;
+Object.defineProperty(person,&quot;height&quot;,&#123;
+    writable : false,
+    value : 180
+&#125;)
+person.height = 183; //183,看似成功修改，但是由于writable为false，所以无法修改
+person.height; //180
 
-      section.post-body(itemprop='articleBody')
-        .post-content.markdown-body(style=`--smc-primary:${theme.colors.primary};`)!=post.content
+//严格模式下
+(function() &#123;
+  &#39;use strict&#39;;
+  var o = &#123;&#125;;
+  Object.defineProperty(o, &#39;b&#39;, &#123;
+    value: 2,
+    writable: false
+  &#125;);
+  o.b = 3; // throws TypeError: &quot;b&quot; is read-only
+  return o.b; // 2
+&#125;());
+</code></pre>
+<h2 id="enumerable"><a href="#enumerable" class="headerlink" title="enumerable"></a>enumerable</h2><p><code>true</code>当且仅当在枚举相应对象的属性时显示此属性，如果为<code>false</code>，在for-in等枚举时会跳过此属性<br><strong>默认为<code>false</code>。</strong></p>
+<pre><code class="js">var o = &#123;&#125;;
+Object.defineProperty(o, &#39;a&#39;, &#123;
+  value: 1,
+  enumerable: true
+&#125;);
+Object.defineProperty(o, &#39;b&#39;, &#123;
+  value: 2,
+  enumerable: false
+&#125;);
+o.c = 3; // enumerable默认为true
+for (var i in o) &#123;
+  console.log(i);
+&#125; //a c
+//obj.propertyIsEnumerable 用来判断属性在obj中是否是可枚举属性。
+o.propertyIsEnumerable(&#39;a&#39;); // true
+o.propertyIsEnumerable(&#39;b&#39;); // false
+o.propertyIsEnumerable(&#39;c&#39;); // true
+</code></pre>
+<h2 id="value"><a href="#value" class="headerlink" title="value"></a>value</h2><p>与属性关联的值。可以是任何有效的JavaScript值（数字，对象，函数等）。<br><strong>默认为<code>undefined</code></strong></p>
+<h2 id="get"><a href="#get" class="headerlink" title="get"></a>get</h2><p>当访问该属性时，将调用该函数（一个充当属性getter的函数，如果没有getter的函数就返回<code>undefined</code>）而无需使用参数，并且将其<code>this</code>设置为访问该属性所通过的对象（由于继承，它可能不是在其上定义该属性的对象）。返回值将用作属性的值。<br><strong>默认为<code>undefined</code></strong></p>
+<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><p>赋值属性后，将使用一个参数（将值分配给属性）并<code>this</code>设置为分配该属性的对象来调用此函数（一个充当属性setter的函数，如果没有setter就返回<code>undefined</code>）。<br><strong>默认为<code>undefined</code></strong></p>
+<pre><code class="js">const person = &#123;
+    name : &quot;zhouxuyu&quot;,
+    age : 18
+&#125;
+Object.defineProperty(person,&quot;sex&quot;,&#123;
+    get:()=&gt;&#123;
+        console.log(`我是$&#123;sex&#125;的`)
+    &#125;,
+    set:(newSex)=&gt;&#123;
+        sex = newSex
+        console.log(`我现在是$&#123;sex&#125;的`)
+    &#125;,
+&#125;) 
+person.sex = &quot;male&quot;;   //我现在是male的    &quot;male&quot; 
+person.sex;  //我是male的
+</code></pre>
+<p><strong>注意！！</strong>get和value不能一起用，不然会报错：<code>Uncaught TypeError: Invalid property descriptor. Cannot both specify accessors and a value or writable attribute, #\&lt;Object&gt;</code></p>
+<ul>
+<li>如果可访问的属性是继承的，则在后代对象上访问和修改该属性时，将调用其<code>get</code>和<code>set</code>方法。如果这些方法使用变量存储值，则所有对象将共享该值。</li>
+</ul>
+<h2 id="描述符的混合使用"><a href="#描述符的混合使用" class="headerlink" title="描述符的混合使用"></a>描述符的混合使用</h2><img src="/2020/09/30/defineProperty/mix.png" class="" title="mix" loading="lazy">
 
-        if theme.reward.enable && page.reward !== false
-          include _partial/post/reward.pug
+<h2 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h2><h4 id="不能监听数组的变化"><a href="#不能监听数组的变化" class="headerlink" title="不能监听数组的变化"></a>不能监听数组的变化</h4><p> <strong>数组的这些方法是无法触发set的:push, pop, shift, unshift,splice, sort, reverse.</strong><br>Vue 把<strong>会修改原来数组</strong>的方法定义为变异方法 (mutation method)<br>非变异方法 (non-mutating method):例如 filter, concat, slice 等，它们都<strong>不会修改原始数组</strong>，而会返回一个新的数组。</p>
+<h4 id="必须遍历对象的每个属性"><a href="#必须遍历对象的每个属性" class="headerlink" title="必须遍历对象的每个属性"></a>必须遍历对象的每个属性</h4><p>使用 Object.defineProperty() 多数要配合 Object.keys() 和遍历，，于是多了一层嵌套</p>
+<h4 id="必须深层遍历嵌套的对象"><a href="#必须深层遍历嵌套的对象" class="headerlink" title="必须深层遍历嵌套的对象"></a>必须深层遍历嵌套的对象</h4><p>当一个对象为深层嵌套的时候,必须进行逐层遍历，直到把每个对象的每个属性都调用 Object.defineProperty() 为止。 </p>
+<h1 id="Proxy"><a href="#Proxy" class="headerlink" title="Proxy"></a>Proxy</h1><p>Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。Proxy 这个词的原意是代理，用在这里表示由它来“代理”某些操作，可以译为“代理器”。</p>
+<blockquote>
+<p><strong>Proxy</strong> 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。</p>
+</blockquote>
+<p><img src="C:\Users\ZJX\AppData\Roaming\Typora\typora-user-images\image-20210120141816958.png" alt="image-20210120141816958" loading="lazy"></p>
+<p>下面是另一个拦截读取属性行为的例子。</p>
+<pre><code class="javascript">var proxy = new Proxy(&#123;&#125;, &#123;
+  get: function(target, propKey) &#123;         //设置getter 读取数据时执行的函数
+    return 35;
+  &#125;
+&#125;);
 
-        if theme.creative_commons.license && theme.creative_commons.post
-          include _partial/post/post-copyright.pug
-
-    if post.prev || post.next
-      include _partial/post/post-nav.pug
+proxy.time // 35
+proxy.name // 35
+proxy.title // 35
+</code></pre>
+<p>如果没有<code>proxy</code>的代理介入，点操作符是直接访问这个对象，第二个参数是一个配置对象，对于每一个被代理的操作，需要提供一个对应的处理函数，该函数将拦截对应的操作</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/09/30/defineProperty/" title="Obect.defineProperty">https://zzzjx0912.github.io/2020/09/30/defineProperty/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/10/11/async/" rel="prev" title="异步"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">异步</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/09/28/MapandSet/" rel="next" title="MapandSet"><span class="post-nav-text">MapandSet</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":"2zJk2CXTVrYxy5ED3pmT3WPF-gzGzoHsz","appKey":"mU8v1Gu5O47mDNpNxsjHt95U","placeholder":"写点啥呗~","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"meta":["nick","mail","link"],"lang":"zh-cn","emojiCDN":"//i0.hdslb.com/bfs/emote/","emojiMaps":{"tv_doge":"6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png","tv_亲亲":"a8111ad55953ef5e3be3327ef94eb4a39d535d06.png","tv_偷笑":"bb690d4107620f1c15cff29509db529a73aee261.png","tv_再见":"180129b8ea851044ce71caf55cc8ce44bd4a4fc8.png","tv_冷漠":"b9cbc755c2b3ee43be07ca13de84e5b699a3f101.png","tv_发怒":"34ba3cd204d5b05fec70ce08fa9fa0dd612409ff.png","tv_发财":"34db290afd2963723c6eb3c4560667db7253a21a.png","tv_可爱":"9e55fd9b500ac4b96613539f1ce2f9499e314ed9.png","tv_吐血":"09dd16a7aa59b77baa1155d47484409624470c77.png","tv_呆":"fe1179ebaa191569b0d31cecafe7a2cd1c951c9d.png","tv_呕吐":"9f996894a39e282ccf5e66856af49483f81870f3.png","tv_困":"241ee304e44c0af029adceb294399391e4737ef2.png","tv_坏笑":"1f0b87f731a671079842116e0991c91c2c88645a.png","tv_大佬":"093c1e2c490161aca397afc45573c877cdead616.png","tv_大哭":"23269aeb35f99daee28dda129676f6e9ea87934f.png","tv_委屈":"d04dba7b5465779e9755d2ab6f0a897b9b33bb77.png","tv_害羞":"a37683fb5642fa3ddfc7f4e5525fd13e42a2bdb1.png","tv_尴尬":"7cfa62dafc59798a3d3fb262d421eeeff166cfa4.png","tv_微笑":"70dc5c7b56f93eb61bddba11e28fb1d18fddcd4c.png","tv_思考":"90cf159733e558137ed20aa04d09964436f618a1.png","tv_惊吓":"0d15c7e2ee58e935adc6a7193ee042388adc22af.png"},"requiredFields":["nick","mail"],"el":"#valine-container"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.0.0</span></div><div class="live_time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-07-12T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

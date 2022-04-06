@@ -1,34 +1,408 @@
-extends _partial/layout.pug
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 5.4.1"><meta name="theme" content="hexo-theme-yun"><title>node基础 | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="none" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.19/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"ZJX的小破站","version":"1.0.0","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="Node基础Node.js 应用程序运行于单个进程中，无需为每个请求创建新的线程。 Node.js 在其标准库中提供了一组异步的 I&#x2F;O 原生功能（用以防止 JavaScript 代码被阻塞），并且 Node.js 中的库通常是使用非阻塞（异步）的范式编写的（从而使阻塞行为成为例外而不是规范）。 当 Node.js 执行 I&#x2F;O 操作时（例如从网络读取、访问数据库或文件系统），Node.js 会在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node基础">
+<meta property="og:url" content="https://zzzjx0912.github.io/2020/11/05/node-base/index.html">
+<meta property="og:site_name" content="ZJX&#39;s Blog">
+<meta property="og:description" content="Node基础Node.js 应用程序运行于单个进程中，无需为每个请求创建新的线程。 Node.js 在其标准库中提供了一组异步的 I&#x2F;O 原生功能（用以防止 JavaScript 代码被阻塞），并且 Node.js 中的库通常是使用非阻塞（异步）的范式编写的（从而使阻塞行为成为例外而不是规范）。 当 Node.js 执行 I&#x2F;O 操作时（例如从网络读取、访问数据库或文件系统），Node.js 会在">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/nobomdom.png">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/module.png">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/port.png">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/bindings.jpeg">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/libuv.png">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/KoaCompose.png">
+<meta property="og:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/middleware.gif">
+<meta property="article:published_time" content="2020-11-05T13:16:08.000Z">
+<meta property="article:modified_time" content="2020-11-05T13:16:08.000Z">
+<meta property="article:author" content="ZJX">
+<meta property="article:tag" content="Node">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zzzjx0912.github.io/2020/11/05/node-base/nobomdom.png"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><a class="site-name" href="/about/site.html">ZJX's Blog</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">26</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">10</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Node%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">Node基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-js%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">Node.js是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-js-%E8%83%BD%E5%B9%B2%E5%98%9B%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">Node.js 能干嘛？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF"><span class="toc-number">1.3.</span> <span class="toc-text">优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hello-World"><span class="toc-number">1.4.</span> <span class="toc-text">Hello World</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97"><span class="toc-number">1.5.</span> <span class="toc-text">核心模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fs%EF%BC%88%E6%96%87%E4%BB%B6%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">fs（文件模块）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#http%EF%BC%88%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">http（网络通信模块）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#child-process%E3%80%81cluster-%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9D%97"><span class="toc-number">1.5.3.</span> <span class="toc-text">child_process、cluster(进程模块)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#events%EF%BC%88%E4%BA%8B%E4%BB%B6%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="toc-number">1.5.4.</span> <span class="toc-text">events（事件模块）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%89%E7%AD%89%E2%80%A6%E2%80%A6"><span class="toc-number">1.5.5.</span> <span class="toc-text">等等……</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84"><span class="toc-number">1.6.</span> <span class="toc-text">体系架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#libuv-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.6.1.</span> <span class="toc-text">libuv 架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFkoa%E4%B8%AD%E7%9A%84ctx"><span class="toc-number">1.7.</span> <span class="toc-text">什么是koa中的ctx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Koa%E7%9A%84%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E2%80%94%E2%80%94Compose"><span class="toc-number">1.8.</span> <span class="toc-text">Koa的关键代码——Compose</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/11/05/node-base/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">node基础</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-11-05 21:16:08" itemprop="dateCreated datePublished" datetime="2020-11-05T21:16:08+08:00">2020-11-05</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/Node/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Node</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h1 id="Node基础"><a href="#Node基础" class="headerlink" title="Node基础"></a>Node基础</h1><p>Node.js 应用程序运行于<strong>单个进程</strong>中，无需为每个请求创建新的线程。 Node.js 在其标准库中提供了一组异步的 I/O 原生功能（用以防止 JavaScript 代码被阻塞），并且 Node.js 中的库通常是使用非阻塞（异步）的范式编写的（从而使阻塞行为成为例外而不是规范）。</p>
+<p>当 Node.js 执行 I/O 操作时（例如从网络读取、访问数据库或文件系统），Node.js 会<strong>在响应返回时恢复操作</strong>（异步），而不是阻塞线程并浪费 CPU 循环等待。</p>
+<p>这使 Node.js 可以在一台服务器上处理数千个并发连接，而无需引入管理线程并发的负担</p>
+<h2 id="Node-js是什么？"><a href="#Node-js是什么？" class="headerlink" title="Node.js是什么？"></a>Node.js是什么？</h2><ul>
+<li>Node.js不是一门语言，也不是库，也不是框架</li>
+<li>Node.js是一个JS运行时环境 （Node.js可以解析和执行JS代码）</li>
+<li>Node.js 中的 JavaScript<ul>
+<li>没有 BOM、DOM</li>
+<li>EcmaScript 基本的 JavaScript 语言部分</li>
+<li>在 Node 中为 JavaScript 提供了一些服务器级别的 API<ul>
+<li>文件操作的能力 </li>
+<li>http 服务的能力</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>构建于Chrome的V8引擎之上<ul>
+<li>代码只是具有特定格式的字符串而已，引擎可以将这些字符串拿去解析和执行</li>
+<li>Node.js的作者吧Google Chrome中的V8引擎移植出来，开发了一个独立的JavaScript运行时环境。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Node-js-能干嘛？"><a href="#Node-js-能干嘛？" class="headerlink" title="Node.js 能干嘛？"></a>Node.js 能干嘛？</h2><p>在Node这个JavaScript执行环境中为JavaScript提供了一些服务器级别的操作API</p>
+<ul>
+<li>例如文件读写</li>
+<li>网络服务的构建</li>
+<li>网络通信</li>
+<li>http服务器</li>
+<li>命令行工具</li>
+<li>等等……</li>
+</ul>
+<h2 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h2><p>Node.js 具有独特的优势，因为为浏览器编写 JavaScript 的数百万前端开发者现在除了客户端代码之外还可以编写服务器端代码，而<strong>无需学习完全不同的语言</strong>。（ECMAScript）</p>
+<p>在 Node.js 中，可以毫无问题地使用新的 ECMAScript 标准，因为不必等待所有用户更新其浏览器，你可以通过更改 Node.js 版本来决定要使用的 ECMAScript 版本，并且还可以通过运行带有标志的 Node.js 来启用特定的实验中的特性。</p>
+<p>只用到了JS中的ECMAScript，因为Node.js是不操作页面，所以没有DOM和BOM</p>
+<pre><code class="node">console.log(window)
+console.log(document)
+</code></pre>
+<img src="/2020/11/05/node-base/nobomdom.png" class="" title="nobomdom" loading="lazy">
 
-block content
-  - var post = page
-  #post
-    article.post-block(itemscope, itemtype='https://schema.org/Article')
-      include _partial/post/post-schema.pug
-      if post.type
-        - post_type = getPropertyByType(post.type)
-      header.post-header
-        h1.post-title(itemprop='name headline', style=post.type ? `color: ${post_type.color}` : '')
-          if post.type
-            +icon(post_type.icon)
-          | #{post.title}
+<p><strong>模块化开发</strong></p>
+<p>Node.js规定一个JavaScript文件就是一个模块，模块内部定义的变量和函数默认情况下在外部无法得到</p>
+<p>模块内部可以使用exports对象进行成员导出， 使用require方法导入其他模块。</p>
+<img src="/2020/11/05/node-base/module.png" class="" title="module" loading="lazy">
 
-          if theme.post_edit.enable
-            include _partial/post/post-edit.pug
+<p><strong>exports和module exports的区别</strong></p>
+<p>nodejs模块中的<strong>exports</strong>对象，你可以用它创建你的模块。例如：（假设这是rocker.js文件）</p>
+<pre><code>exports.name = function() &#123;
+    console.log(&#39;My name is Lemmy Kilmister&#39;);
+&#125;;
+</code></pre>
+<p>在另一个文件中你这样引用</p>
+<pre><code>var rocker = require(&#39;./rocker.js&#39;);
+rocker.name(); // &#39;My name is Lemmy Kilmister&#39;
+</code></pre>
+<p>那到底<strong>Module.exports</strong>是什么呢？它是否合法呢？</p>
+<p>其实，**<code>Module.exports</code><strong>才是真正的接口，</strong>exports<strong>只不过是它的一个辅助工具。　最终返回给调用的是</strong><code>Module.exports</code><strong>而不是</strong>exports。**</p>
+<p>所有的<strong>exports</strong>收集到的属性和方法，都赋值给了**<code>Module.exports</code><strong>。当然，这有个前提，就是</strong><code>Module.exports</code><strong><code>本身不具备任何属性和方法``。如果，</code></strong><code>Module.exports</code>**`已经具备一些属性和方法，那么exports收集来的信息将被忽略。```</p>
+<p>修改rocker.js如下：</p>
+<pre><code>module.exports = &#39;ROCK IT!&#39;;
+exports.name = function() &#123;
+    console.log(&#39;My name is Lemmy Kilmister&#39;);
+&#125;;
+</code></pre>
+<p> 再次引用执行rocker.js</p>
+<pre><code>var rocker = require(&#39;./rocker.js&#39;);
+rocker.name(); // TypeError: Object ROCK IT! has no method &#39;name&#39;
+</code></pre>
+<p>发现报错：对象“ROCK IT!”没有name方法</p>
+<p>rocker模块忽略了exports收集的name方法，返回了一个字符串“ROCK IT!”。由此可知，你的模块并不一定非得返回“实例化对象”。你的模块可以是任何合法的javascript对象–boolean, number, date, JSON, string, function, array等等。</p>
+<h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h2><ol>
+<li>创建编写JS代码脚本文件</li>
+<li>打开终端，定位到文件目录下</li>
+<li>输入<code>node  文件名</code>打开并执行对应文件</li>
+</ol>
+<p>注意：文件名不要用<code>node.js</code>来命名</p>
+<h2 id="核心模块"><a href="#核心模块" class="headerlink" title="核心模块"></a><a target="_blank" rel="noopener" href="http://nodejs.cn/api/">核心模块</a></h2><p>Node为JavaScript提供了很多服务器级别的API，这些API绝大多数都被包装到了具名的核心模块中了。例如文件操作的<code>fs</code>核心模块，http服务构建的<code>http</code>模块，<code>path</code>路径模块，<code>os</code>操作系统信息模块等等</p>
+<p>在node中，没有全局作用域，只有模块作用域，每一个模块相互独立，互不影响</p>
+<p>在node当中，模块有三种：</p>
+<ul>
+<li>具名的核心模块</li>
+<li>自己编写的文件模块(用相对路径调用必须加<code>./</code>，可以省略后缀名)</li>
+<li>第三方模块</li>
+</ul>
+<h3 id="fs（文件模块）"><a href="#fs（文件模块）" class="headerlink" title="fs（文件模块）"></a>fs（文件模块）</h3><p>fs是file-system的简写，就是文件系统的意思，在这个核心模块中，就提供了所有的文件操作相关的 API </p>
+<p><strong>步骤</strong></p>
+<ul>
+<li><p>使用require方法加载fs核心模块</p>
+<pre><code class="js">var fs = require(&#39;fs&#39;)
+</code></pre>
+<blockquote>
+<p>require方法有两个作用：</p>
+<p>​    1.<strong>加载文件模块</strong>并<strong>执行</strong>里面的代码</p>
+<p>​    2.拿到被加载文件模块导出的接口对象</p>
+<p>​    在每个文件模块中都提供了一个对象：exports用于存放需要被外部访问的成员（默认是一个空对象{}）</p>
+</blockquote>
+<ul>
+<li>例子：读取文件<ul>
+<li>第一个参数是要读取的文件路径</li>
+<li>第二个参数是回调函数，接收error和data两个参数<ul>
+<li>error<ul>
+<li>如果读取失败，error为Error对象</li>
+<li>如果读取成功，error为null</li>
+</ul>
+</li>
+<li>data<ul>
+<li>如果读取失败，data就是undefined</li>
+<li>如果读取成功，data就是读取的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="js">fs.readFile(&#39;./hello.txt&#39;,(error, data)=&gt;&#123;
+    //如果成功
+    console.log(data)     //16进制数据，所以应该用toString方法把其转为我们能认识的字符（data.toString）
+    console.log(error)    // null
+&#125;)
+</code></pre>
+</li>
+</ul>
+<p><strong>注意</strong>：要习惯性得用error去做错误判断</p>
+<h3 id="http（网络通信模块）"><a href="#http（网络通信模块）" class="headerlink" title="http（网络通信模块）"></a>http（网络通信模块）</h3><p>可以用Node非常轻松的构建一个Web服务器，在Node中专门提供了一个核心模块：http，这个模块的职责就是帮你创建编写服务器的</p>
+<p><strong>步骤</strong></p>
+<ul>
+<li><p>加载http核心模块</p>
+<pre><code class="js">var http = require(&#39;require&#39;)
+</code></pre>
+</li>
+<li><p>使用http.createServer()方法创建一个Web服务器，并返回一个Server实例</p>
+<pre><code class="js">var server = http.createServer()
+</code></pre>
+</li>
+<li><p>服务器要做些什么事情呢？</p>
+<ul>
+<li><p>提供服务—&gt;对数据的服务</p>
+</li>
+<li><p>发送请求</p>
+</li>
+<li><p>接受请求</p>
+</li>
+<li><p>处理请求</p>
+</li>
+<li><p>发送响应（处理的反馈）</p>
+</li>
+<li><p>注册request请求事件</p>
+</li>
+<li><p>当客户端请求过来，就触发了服务器的request请求事件，然后执行回调函数</p>
+<ul>
+<li>request请求事件处理函数，需要接受两个参数（request，response）<ul>
+<li>request 请求对象：请求对象可以用来获取客户端的一些请求信息，例如请求的路径</li>
+<li>response响应对象：响应对象可以用来给客户端发送响应消息<ul>
+<li>response对象有一个write方法，write可以用来给客户端发送响应数据，write方法可以使用多次，但是最后一次必须用end方法来结束响应，否则客户端会一直等待</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="js">server.on(&#39;request&#39;, function (request,response) &#123;
+    //不同的资源对应的Content-Type是不一样的，具体参考：https://tool.oschina.net/commons表格
+    response.setHeader(&#39;Content-Type&#39;, &#39;text/html; charset=utf-8&#39;);
+    console.log(&#39;收到客户端请求了,路径是：&#39;+ request.url)
+    switch(request.url)&#123;
+      case &#39;/login&#39; : response.write(&#39;&lt;p&gt;进入登录界面中...请稍后&lt;/p&gt;&#39;); break;
+      case &#39;/register&#39; : response.write(&#39;&lt;p&gt;正在进入注册界面...请稍后&lt;/p&gt;&#39;); break;
+      case &#39;/index&#39; : response.write(&#39;&lt;p&gt;这就是首页&lt;/p&gt;&#39;); break;
+      default : response.write(&#39;404 Not Found&#39;); break;
+    &#125;
+    response.end();
+&#125;)
+</code></pre>
+</li>
+<li><p>绑定端口号，启动服务号（计算机有一些默认端口号，最好也不要使用，比如http服务的80端口号）</p>
+<pre><code class="js">server.listen(5555,()=&gt;&#123;
+  console.log(&#39;服务器启动成功了，可以通过127.0.0.1:5555/ 来进行访问&#39;);
+&#125;)
+</code></pre>
+</li>
+</ul>
+<blockquote>
+<p>端口号的范围在0~65535之间，为什么是65535？</p>
+<img src="/2020/11/05/node-base/port.png" class="" title="port" loading="lazy">
 
-        include _partial/post/post-meta.pug
+<p>TCP报文头部存放端口号为16位，所以端口号为2^16-1=65535个（减去全0情况），所以范围在0~65535之间</p>
+<p>但是如果<strong>启动端口为0时，会随机生成一个范围内的端口号</strong></p>
+<p><strong>启动端口为1或者65535时效果一样，都是项目可以正常启动，浏览器访问时拒绝。说是不安全的端口</strong></p>
+<p><strong>端口号为65536或者更大时。直接项目无法启动，提示你换一个其它的端口号</strong></p>
+<p><strong>端口号为2，65534或者其它区间内的任意端口一切正常。happy!</strong></p>
+</blockquote>
+<h3 id="child-process、cluster-进程模块"><a href="#child-process、cluster-进程模块" class="headerlink" title="child_process、cluster(进程模块)"></a>child_process、cluster(进程模块)</h3><h3 id="events（事件模块）"><a href="#events（事件模块）" class="headerlink" title="events（事件模块）"></a>events（事件模块）</h3><h3 id="等等……"><a href="#等等……" class="headerlink" title="等等……"></a>等等……</h3><hr>
+<h2 id="体系架构"><a href="#体系架构" class="headerlink" title="体系架构"></a>体系架构</h2><p>Node.js主要分为四大部分，Node Standard Library，Node Bindings，V8，Libuv，架构图如下:</p>
+<img src="/2020/11/05/node-base/bindings.jpeg" class="" title="bindings" loading="lazy">
 
-        if post.url
-          a.hty-button.hty-button--raised(href=url_for(post.url), style=`margin-top: 1rem;background-color:${post_type.color}`)=__('post.view_link')
+<ul>
+<li><p>Node Standard Library 是我们每天都在用的核心模块，如Http, Buffer 模块。</p>
+</li>
+<li><p>Node Bindings 是沟通JS 和 C++的桥梁，封装V8和Libuv的细节，向上层提供基础API服务。</p>
+<ul>
+<li>这一层是支撑 Node.js 运行的关键，由 C/C++ 实现。<ul>
+<li>V8 是Google开发的JavaScript引擎，提供JavaScript运行环境，可以说它就是 Node.js 的发动机。</li>
+<li>Libuv 是专门为Node.js开发的一个封装库，提供跨平台的异步I/O能力.</li>
+<li>C-ares：提供了异步处理 DNS 相关的能力。</li>
+<li>http_parser、OpenSSL、zlib 等：提供包括 http 解析、SSL、数据压缩等其他的能力。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="libuv-架构"><a href="#libuv-架构" class="headerlink" title="libuv 架构"></a>libuv 架构</h3><img src="/2020/11/05/node-base/libuv.png" class="" title="libuv" loading="lazy">
 
-      section.post-body(itemprop='articleBody')
-        .post-content.markdown-body(style=`--smc-primary:${theme.colors.primary};`)!=post.content
+<p> 从左往右分为两部分，一部分是与网络I/O相关的请求，而另外一部分是由文件I/O, DNS Ops以及User code组成的请求。</p>
+<p>从图中可以看出，对于Network I/O和以File I/O为代表的另一类请求，异步处理的底层支撑机制是完全不一样的。</p>
+<p>对于Network I/O相关的请求， 根据OS平台不同，分别使用Linux上的epoll，OSX和BSD类OS上的kqueue，SunOS上的event ports以及Windows上的IOCP机制。</p>
+<p>而对于File I/O为代表的请求，则使用thread pool。利用thread pool的方式实现异步请求处理，在各类OS上都能获得很好的支持。</p>
+<hr>
+<h2 id="什么是koa中的ctx"><a href="#什么是koa中的ctx" class="headerlink" title="什么是koa中的ctx"></a>什么是koa中的ctx</h2><p>遇事不决就打印：</p>
+<pre><code class="js">const Koa = require(&#39;koa&#39;);
+const app = new Koa();
 
-        if theme.reward.enable && page.reward !== false
-          include _partial/post/reward.pug
+app.use(ctx =&gt; &#123;
+  ctx.body = &#39;Hello Koa in app-async.js&#39;;
+  console.log(ctx)
+&#125;);
 
-        if theme.creative_commons.license && theme.creative_commons.post
-          include _partial/post/post-copyright.pug
+app.listen(5555,()=&gt;&#123;console.log(&#39;服务器启动成功了，可以通过127.0.0.1:5555/ 来进行访问&#39;);&#125;);
+</code></pre>
+<p>​                                            ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓</p>
+<pre><code class="js">&#123;
+  request: &#123;
+    method: &#39;GET&#39;,
+    url: &#39;/&#39;,
+    header: &#123;
+      host: &#39;127.0.0.1:5555&#39;,
+      connection: &#39;keep-alive&#39;,
+      &#39;upgrade-insecure-requests&#39;: &#39;1&#39;,
+      &#39;user-agent&#39;: &#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
+6 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36&#39;,
+      accept: &#39;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,
+image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&#39;,
+      &#39;sec-fetch-site&#39;: &#39;none&#39;,
+      &#39;sec-fetch-mode&#39;: &#39;navigate&#39;,
+      &#39;sec-fetch-dest&#39;: &#39;document&#39;,
+                                                                                      accept: &#39;image/avif,image/webp,image/apng,image/*,*/*;q=0.8&#39;,
+      &#39;sec-fetch-site&#39;: &#39;same-origin&#39;,
+      &#39;sec-fetch-mode&#39;: &#39;no-cors&#39;,
+      &#39;sec-fetch-dest&#39;: &#39;image&#39;,
+      referer: &#39;http://127.0.0.1:5555/&#39;,
+      &#39;accept-encoding&#39;: &#39;gzip, deflate, br&#39;,
+      &#39;accept-language&#39;: &#39;zh-CN,zh;q=0.9&#39;
+    &#125;
+  &#125;,
+  response: &#123;
+    status: 200,
+    message: &#39;OK&#39;,
+    header: [Object: null prototype] &#123;
+      &#39;content-type&#39;: &#39;text/plain; charset=utf-8&#39;,
+      &#39;content-length&#39;: &#39;25&#39;
+    &#125;
+  &#125;,
+  app: &#123; subdomainOffset: 2, proxy: false, env: &#39;development&#39; &#125;,
+  originalUrl: &#39;/favicon.ico&#39;,
+  req: &#39;&lt;original node req&gt;&#39;,
+  res: &#39;&lt;original node res&gt;&#39;,
+  socket: &#39;&lt;original node socket&gt;&#39;
+&#125;
+</code></pre>
+<p>可见它主要包括request和response两部分。</p>
+<blockquote>
+<p>ctx是context的缩写中文一般叫成上下文，这个在所有语言里都有的名词，可以理解为上(request)下(response)沟通的环境，所以koa中把他们两都封装进了ctx对象，koa官方文档里的解释是为了调用方便，ctx.req=ctx.request,ctx.res=ctx.response</p>
+<p>body是http协议中的响应体，header是指响应头<br>ctx.body = ctx.res.body = ctx.response.body</p>
+</blockquote>
+<p>Koa 提供一个 Context 对象，表示一次对话的上下文（包括 HTTP 请求和 HTTP 回复）。通过加工这个对象，就可以控制返回给用户的内容。</p>
+<h2 id="Koa的关键代码——Compose"><a href="#Koa的关键代码——Compose" class="headerlink" title="Koa的关键代码——Compose"></a>Koa的关键代码——Compose</h2><p>这里分享一个在思否上一个博主写的我觉得比较好的源码分析：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013447551">https://segmentfault.com/a/1190000013447551</a></p>
+<p>首先理解一个思想是：<code>g()+h()=g(h())</code>，这就是洋葱模型的关键</p>
+<p>中间件这儿的重点，是<strong>compose</strong>函数。<strong>compose</strong>函数的源代码虽然很简洁，但要理解明白着实要下一番功夫。<br>以下为源码分析：</p>
+<pre><code class="js">&#39;use strict&#39;
+/**
+ * Expose compositor.
+ */
+// 暴露compose函数
+module.exports = compose
+/**
+ * Compose `middleware` returning
+ * a fully valid middleware comprised
+ * of all those which are passed.
+ *
+ * @param &#123;Array&#125; middleware
+ * @return &#123;Function&#125;
+ * @api public
+ */
+// compose函数需要传入一个数组队列 [fn,fn,fn,fn]
+function compose (middleware) &#123;
+  // 如果传入的不是数组，则抛出错误
+  if (!Array.isArray(middleware)) throw new TypeError(&#39;Middleware stack must be an array!&#39;)
+  // 数组队列中有一项不为函数，则抛出错误
+  for (const fn of middleware) &#123;
+    if (typeof fn !== &#39;function&#39;) throw new TypeError(&#39;Middleware must be composed of functions!&#39;)
+  &#125;
 
-    if post.prev || post.next
-      include _partial/post/post-nav.pug
+  /**
+   * @param &#123;Object&#125; context
+   * @return &#123;Promise&#125;
+   * @api public
+   */
+
+   // compose函数调用后，返回的是以下这个匿名函数
+   // 匿名函数接收两个参数，第一个随便传入，根据使用场景决定
+   // 第一次调用时候第二个参数next实际上是一个undefined，因为初次调用并不需要传入next参数
+   // 这个匿名函数返回一个promise
+  return function (context, next) &#123;
+    // last called middleware #
+    //初始下标为-1
+    let index = -1
+    return dispatch(0)
+    function dispatch (i) &#123;
+      // 如果传入i为负数且&lt;=-1 返回一个Promise.reject携带着错误信息
+      // 所以执行两次next会报出这个错误。将状态rejected，就是确保在一个中间件中next只调用一次
+      
+
+      if (i &lt;= index) return Promise.reject(new Error(&#39;next() called multiple times&#39;))
+      // 执行一遍next之后,这个index值将改变
+      index = i
+      // 根据下标取出一个中间件函数
+      let fn = middleware[i]
+      // next在这个内部中是一个局部变量，值为undefined
+      // 当i已经是数组的length了，说明中间件函数都执行结束，执行结束后把fn设置为undefined
+      // 问题：本来middleware[i]如果i为length的话取到的值已经是undefined了，为什么要重新给fn设置为undefined呢？
+      if (i === middleware.length) fn = next
+
+      //如果中间件遍历到最后了。那么。此时return Promise.resolve()返回一个成功状态的promise
+      // 方面之后做调用then
+      if (!fn) return Promise.resolve()
+
+      // try catch保证错误在Promise的情况下能够正常被捕获。
+
+      // 调用后依然返回一个成功的状态的Promise对象
+      // 用Promise包裹中间件，方便await调用
+      // 调用中间件函数，传入context（根据场景不同可以传入不同的值，在KOa传入的是ctx）
+      // 第二个参数是一个next函数，可在中间件函数中调用这个函数
+      // 调用next函数后，递归调用dispatch函数，目的是执行下一个中间件函数
+      // next函数在中间件函数调用后返回的是一个promise对象
+      // 读到这里不得不佩服作者的高明之处。
+      try &#123;
+        return Promise.resolve(fn(context, function next () &#123;
+          return dispatch(i + 1)
+        &#125;))
+      &#125; catch (err) &#123;
+        return Promise.reject(err)
+      &#125;
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>为了助于理解，我整理了一张图</p>
+<img src="/2020/11/05/node-base/KoaCompose.png" class="" title="KoaCompose" loading="lazy">
+
+<p>再来个动图配合理解</p>
+<img src="/2020/11/05/node-base/middleware.gif" class="" title="middleware" loading="lazy"></div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/11/05/node-base/" title="node基础">https://zzzjx0912.github.io/2020/11/05/node-base/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2021/03/15/someKnowledge/" rel="prev" title=""><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text"></span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/10/30/Create-Object/" rel="next" title="创建对象"><span class="post-nav-text">创建对象</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":"2zJk2CXTVrYxy5ED3pmT3WPF-gzGzoHsz","appKey":"mU8v1Gu5O47mDNpNxsjHt95U","placeholder":"写点啥呗~","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"meta":["nick","mail","link"],"lang":"zh-cn","emojiCDN":"//i0.hdslb.com/bfs/emote/","emojiMaps":{"tv_doge":"6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png","tv_亲亲":"a8111ad55953ef5e3be3327ef94eb4a39d535d06.png","tv_偷笑":"bb690d4107620f1c15cff29509db529a73aee261.png","tv_再见":"180129b8ea851044ce71caf55cc8ce44bd4a4fc8.png","tv_冷漠":"b9cbc755c2b3ee43be07ca13de84e5b699a3f101.png","tv_发怒":"34ba3cd204d5b05fec70ce08fa9fa0dd612409ff.png","tv_发财":"34db290afd2963723c6eb3c4560667db7253a21a.png","tv_可爱":"9e55fd9b500ac4b96613539f1ce2f9499e314ed9.png","tv_吐血":"09dd16a7aa59b77baa1155d47484409624470c77.png","tv_呆":"fe1179ebaa191569b0d31cecafe7a2cd1c951c9d.png","tv_呕吐":"9f996894a39e282ccf5e66856af49483f81870f3.png","tv_困":"241ee304e44c0af029adceb294399391e4737ef2.png","tv_坏笑":"1f0b87f731a671079842116e0991c91c2c88645a.png","tv_大佬":"093c1e2c490161aca397afc45573c877cdead616.png","tv_大哭":"23269aeb35f99daee28dda129676f6e9ea87934f.png","tv_委屈":"d04dba7b5465779e9755d2ab6f0a897b9b33bb77.png","tv_害羞":"a37683fb5642fa3ddfc7f4e5525fd13e42a2bdb1.png","tv_尴尬":"7cfa62dafc59798a3d3fb262d421eeeff166cfa4.png","tv_微笑":"70dc5c7b56f93eb61bddba11e28fb1d18fddcd4c.png","tv_思考":"90cf159733e558137ed20aa04d09964436f618a1.png","tv_惊吓":"0d15c7e2ee58e935adc6a7193ee042388adc22af.png"},"requiredFields":["nick","mail"],"el":"#valine-container"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.0.0</span></div><div class="live_time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-07-12T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>
