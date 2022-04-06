@@ -1,15 +1,1 @@
-HTMLElement.prototype.wrap = function(wrapper) {
-  this.parentNode.insertBefore(wrapper, this);
-  this.parentNode.removeChild(this);
-  wrapper.appendChild(this);
-};
-
-Yun.utils = {
-  wrapTable: () => {
-    document.querySelectorAll("table").forEach((el) => {
-      const container = document.createElement("div");
-      container.className = "table-container";
-      el.wrap(container);
-    });
-  },
-};
+import{a,b,c,d,e,f,g,h}from"./chunk-YZ7E3ATC.js";import"./chunk-TTX6TVTO.js";export{a as copyright,d as getScript,e as insertCopyCodeBtn,b as isHome,g as registerScrollPercent,h as registerToggleSidebar,f as renderKatex,c as wrapTable};
