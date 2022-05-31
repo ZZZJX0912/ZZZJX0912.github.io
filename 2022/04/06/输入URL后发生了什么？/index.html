@@ -1,331 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 6.1.0"><meta name="theme" content="hexo-theme-yun"><title>输入URL后发生了什么 | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".markdown-body img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" type="image/png" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    window.Yun = {}
-    window.CONFIG = {"hostname":"zzzjx0912.github.io","root":"/","title":"ZJX的小破站","version":"1.8.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":null},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
-  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><script>(function(){
-  var bp = document.createElement('script');
-  var curProtocol = window.location.protocol.split(':')[0];
-  if (curProtocol === 'https') {
-    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else {
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(bp, s);
-})();</script><meta name="description" content="输入URL后发生了什么参考：李兵 浏览器工作原理与实践 ​            神三元博客     浏览器检查浏览器做初步的格式化检查，构建请求行信息，构建好之后，浏览器准备发起网络请求 GET &#x2F;index.html HTTP1.1  查找缓存在发起真正的网络请求之前，浏览器会先在浏览器缓存中查找是否存在请求的资源文件，如果浏览器发现请求的资源在浏览器缓存中存有副本，则拦截请求，浏览器判断这">
-<meta property="og:type" content="article">
-<meta property="og:title" content="输入URL后发生了什么">
-<meta property="og:url" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/index.html">
-<meta property="og:site_name" content="ZJX&#39;s Blog">
-<meta property="og:description" content="输入URL后发生了什么参考：李兵 浏览器工作原理与实践 ​            神三元博客     浏览器检查浏览器做初步的格式化检查，构建请求行信息，构建好之后，浏览器准备发起网络请求 GET &#x2F;index.html HTTP1.1  查找缓存在发起真正的网络请求之前，浏览器会先在浏览器缓存中查找是否存在请求的资源文件，如果浏览器发现请求的资源在浏览器缓存中存有副本，则拦截请求，浏览器判断这">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%80%BB%E6%B5%81%E7%A8%8B.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B.jpeg">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98%E8%BF%87%E7%A8%8B.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/TCP%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B.png">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/63ba3078a36f465dad8b825736762d1a~tplv-k3u1fbpfcp-watermark.awebp">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/pic/6159252dd42a2834349bc9c82bffdeea15ce37d31197?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto">
-<meta property="og:image" content="https://images2017.cnblogs.com/blog/858807/201708/858807-20170820124533396-745279476.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20210202093829157.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxOTM0NzQ1,size_16,color_FFFFFF,t_70#pic_center">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20210202100036836.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxOTM0NzQ1,size_16,color_FFFFFF,t_70#pic_center">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E8%AF%B7%E6%B1%82%E5%A4%B4.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/URI%E4%B8%8EURL%E7%9A%84%E5%85%B3%E7%B3%BB.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%93%8D%E5%BA%94%E5%A4%B4.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BF%9B%E7%A8%8B%E4%BF%A1%E6%81%AF.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/DOM%E6%A0%91.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%A0%B7%E5%BC%8F%E8%AE%A1%E7%AE%97.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E8%8A%82%E7%82%B9%E8%AE%A1%E7%AE%97.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%8E%9F%E5%9B%BE.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%9B%BE%E5%B1%82%E6%A0%91%E5%92%8CDOM%E6%A0%91%E7%9A%84%E5%85%B3%E7%B3%BB.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E7%8B%AC%E7%AB%8B%E5%9B%BE%E5%B1%82.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E8%A7%86%E5%8F%A3%E4%B8%AD%E7%9C%8B%E5%88%B0%E7%9A%84.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%AE%9E%E9%99%85%E7%9A%84%E5%9B%BE%E5%B1%82%E5%85%B3%E7%B3%BB.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%A0%85%E6%A0%BC%E5%8C%96.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E9%87%8D%E7%BB%98.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E9%87%8D%E6%8E%92.png">
-<meta property="og:image" content="https://sanyuan0704.top/tcp/002.jpg">
-<meta property="article:published_time" content="2022-04-06T06:06:15.000Z">
-<meta property="article:modified_time" content="2022-04-06T06:06:15.429Z">
-<meta property="article:author" content="ZJX">
-<meta property="article:tag" content="HTTP">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%80%BB%E6%B5%81%E7%A8%8B.png"><script>(function() {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const setting = localStorage.getItem('darken-mode') || 'auto'
-  if (setting === 'dark' || (prefersDark && setting !== 'light'))
-    document.documentElement.classList.toggle('dark', true)
-})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><span class="site-name">ZJX's Blog</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">31</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">输入URL后发生了什么</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A3%80%E6%9F%A5"><span class="toc-number">1.1.</span> <span class="toc-text">浏览器检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E7%BC%93%E5%AD%98"><span class="toc-number">1.2.</span> <span class="toc-text">查找缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87IP%E5%9C%B0%E5%9D%80%E5%92%8C%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.3.</span> <span class="toc-text">准备IP地址和端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS%E8%A7%A3%E6%9E%90%EF%BC%88%E9%80%92%E5%BD%92%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B7%91%E4%B8%80%E4%B8%AA%E6%9D%A5%E5%9B%9E%EF%BC%8C%E5%B0%B1%E9%9C%80%E8%A6%811%E6%AC%A1RRT%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">DNS解析（递归一个服务器跑一个来回，就需要1次RRT）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="toc-number">1.3.2.</span> <span class="toc-text">获取端口号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AD%89%E5%BE%85TCP%E9%98%9F%E5%88%97"><span class="toc-number">1.4.</span> <span class="toc-text">等待TCP队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8BTCP%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.5.</span> <span class="toc-text">建立TCP连接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E6%AE%B5%E5%88%86%E6%9E%90"><span class="toc-number">1.5.1.</span> <span class="toc-text">字段分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="toc-number">1.5.2.</span> <span class="toc-text">三次握手</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%91%E9%80%81HTTP%E8%AF%B7%E6%B1%82"><span class="toc-number">1.6.</span> <span class="toc-text">发送HTTP请求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%A4%84%E7%90%86HTTP%E8%AF%B7%E6%B1%82"><span class="toc-number">1.7.</span> <span class="toc-text">服务器处理HTTP请求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93"><span class="toc-number">1.8.</span> <span class="toc-text">浏览器渲染</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.8.1.</span> <span class="toc-text">准备渲染进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="toc-number">1.8.2.</span> <span class="toc-text">渲染流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E6%9E%84%E5%BB%BADOM%E6%A0%91"><span class="toc-number">1.8.2.1.</span> <span class="toc-text">1、构建DOM树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E6%A0%B7%E5%BC%8F%E8%AE%A1%E7%AE%97"><span class="toc-number">1.8.2.2.</span> <span class="toc-text">2、样式计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%82%A3%E5%B8%83%E5%B1%80%E6%A0%91%E4%B8%8A%E7%9A%84%E8%8A%82%E7%82%B9%E9%9C%80%E8%A6%81%E5%85%B7%E5%A4%87%E4%BB%80%E4%B9%88%E6%9D%A1%E4%BB%B6%E6%89%8D%E8%83%BD%E5%9C%A8%E5%9B%BE%E5%B1%82%E6%A0%91%E4%B8%8A%E6%8B%A5%E6%9C%89%E4%B8%80%E4%B8%AA%E5%9B%BE%E5%B1%82%E5%91%A2%EF%BC%9F"><span class="toc-number">1.8.2.3.</span> <span class="toc-text">那布局树上的节点需要具备什么条件才能在图层树上拥有一个图层呢？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E4%BA%A7%E7%94%9F%E7%BB%98%E5%88%B6%E5%88%97%E8%A1%A8"><span class="toc-number">1.8.2.4.</span> <span class="toc-text">4、产生绘制列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E6%A0%85%E6%A0%BC%E5%8C%96%EF%BC%88raster%EF%BC%89%E6%93%8D%E4%BD%9C"><span class="toc-number">1.8.2.5.</span> <span class="toc-text">5、栅格化（raster）操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81%E9%87%8D%E7%BB%98%E9%87%8D%E6%8E%92"><span class="toc-number">1.8.2.6.</span> <span class="toc-text">6、重绘重排</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%AD%E5%BC%80TCP%E9%93%BE%E6%8E%A5"><span class="toc-number">1.9.</span> <span class="toc-text">断开TCP链接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="toc-number">1.9.1.</span> <span class="toc-text">四次挥手</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">输入URL后发生了什么</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2022-04-06 14:06:15" itemprop="dateCreated datePublished" datetime="2022-04-06T14:06:15+08:00">2022-04-06</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/HTTP/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">HTTP</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><hr>
-<h1 id="输入URL后发生了什么"><a href="#输入URL后发生了什么" class="headerlink" title="输入URL后发生了什么"></a>输入URL后发生了什么</h1><p>参考：李兵 浏览器工作原理与实践</p>
-<p>​            神三元博客</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%80%BB%E6%B5%81%E7%A8%8B.png" class="" title="总流程" loading="lazy">
-
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B.jpeg" class="" title="数据流程" loading="lazy">
-
-<h2 id="浏览器检查"><a href="#浏览器检查" class="headerlink" title="浏览器检查"></a><strong>浏览器检查</strong></h2><p>浏览器做初步的格式化检查，构建<strong>请求行</strong>信息，构建好之后，浏览器准备发起网络请求</p>
-<pre><code class="txt">GET /index.html HTTP1.1
-</code></pre>
-<h2 id="查找缓存"><a href="#查找缓存" class="headerlink" title="查找缓存"></a>查找缓存</h2><p>在发起真正的网络请求之前，浏览器会先在浏览器缓存中查找是否存在请求的资源文件，如果浏览器发现请求的资源在浏览器缓存中存有副本，则拦截请求，<strong>浏览器判断这些请求参数</strong>，击中强缓存就直接返回该资源的副本，并直接结束请求，而不会再去源服务器重新下载，否则就把<strong>请求参数</strong>加到<strong>请求头</strong>，准备在网络请求时中传给服务器，去判断协商缓存</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98%E8%BF%87%E7%A8%8B.png" class="" title="浏览器缓存过程" loading="lazy">
-
-<h2 id="准备IP地址和端口"><a href="#准备IP地址和端口" class="headerlink" title="准备IP地址和端口"></a>准备IP地址和端口</h2><p>在了解准备IP地址和端口之前，先看看HTTP和TCP的关系，因为浏览器使用<strong>HTTP协议作为应用层协议</strong>用来封装请求的文本信息；并使用<strong>TCP/IP 作传输层协议</strong>将它发到网络上，所以在 HTTP 工作开始之前，浏览器需要通过 TCP 与服务器建立连接。也就是说<strong>HTTP 的内容是通过 TCP 的传输数据阶段来实现的</strong></p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/TCP%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B.png" class="" title="TCP通信过程" loading="lazy">
-
-<hr>
-<h3 id="DNS解析（递归一个服务器跑一个来回，就需要1次RRT）"><a href="#DNS解析（递归一个服务器跑一个来回，就需要1次RRT）" class="headerlink" title="DNS解析（递归一个服务器跑一个来回，就需要1次RRT）"></a>DNS解析（递归一个服务器跑一个来回，就需要1次RRT）</h3><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/63ba3078a36f465dad8b825736762d1a~tplv-k3u1fbpfcp-watermark.awebp" alt="02" loading="lazy"></p>
-<ol>
-<li><p>首先查找<strong>本地的hosts缓存文件</strong>是否有这个url地址的IP映射</p>
-</li>
-<li><p>如果本地hosts缓存文件没有，浏览器向<strong>本地域名服务器</strong>发起请求（本地dns服务器由运营商提供）</p>
-</li>
-<li><p>如果本地域名服务器查找本地缓存后，如果有对应的IP映射会直接返回对应映射</p>
-</li>
-<li><p>如果没有本地域名服务器没有对应的IP映射，<strong>本地域名服务器</strong>会向<strong>根域名服务器</strong>发出请求</p>
-<p><img src="https://bkimg.cdn.bcebos.com/pic/6159252dd42a2834349bc9c82bffdeea15ce37d31197?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto" alt="img" loading="lazy"></p>
-<blockquote>
-<p><strong>根域名服务器，只保存其下一级域名服务器，下一级服务器主要有com、net,、org、mil、或者国家域名比如cn。</strong></p>
-</blockquote>
-<blockquote>
-<p>Com服务器用于管理域名后缀为“.com”的域名，<a target="_blank" rel="noopener" href="http://比如google.com/">比如google.com</a>, <a target="_blank" rel="noopener" href="http://cisco.com/">cisco.com</a>。其它的域名解析以此类推。</p>
-</blockquote>
-</li>
-<li><p>根DNS服务器收到请求后会判断这个域名(.com)是哪个顶级域名服务器来授权管理，并会返回一个负责该顶级域名服务器的一个IP，本地DNS服务器收到IP信息后，将会联系负责.com域的这台顶级域名服务器。</p>
-</li>
-<li><p>如果这个顶级域名服务器也没有对应的IP映射，则顶级域名服务器（.com）会提供负责管理这个域名的下一级DNS域名服务器（<a target="_blank" rel="noopener" href="http://google.com/">google.com</a>）的IP地址给本地DNS服务器，本地DNS服务器收到IP信息后，将会联系负责的这台DNS域名服务器。</p>
-</li>
-<li><p>DNS域名服务器收到请求后，查找自己的映射表，如果有对应的映射，将返回对应的IP地址给本地DNS服务器。</p>
-</li>
-<li><p>本地DNS服务器对应的IP地址后，本地dns服务器对域名的解析服务器进行请求，从而得到一个ip地址和域名的对应关系，并存储在缓存文件中。</p>
-</li>
-<li><p>如果经过DNS递归查询之后仍找不到对应的IP映射，则报错，<strong>表示无法查询到所需的IP地址</strong>。</p>
-</li>
-</ol>
-<p><img src="https://images2017.cnblogs.com/blog/858807/201708/858807-20170820124533396-745279476.png" alt="img" loading="lazy"></p>
-<blockquote>
-<p><strong>递归</strong>：客户端只发一次请求，要求对方给出最终结果。</p>
-</blockquote>
-<blockquote>
-<p><strong>迭代</strong>：客户端发出一次请求，对方如果没有授权回答，它就会返回一个能解答这个查询的其它名称服务器列表，</p>
-</blockquote>
-<blockquote>
-<p>​     客户端会再向返回的列表中发出请求，直到找到最终负责所查域名的名称服务器，从它得到最终结果。</p>
-</blockquote>
-<h3 id="获取端口号"><a href="#获取端口号" class="headerlink" title="获取端口号"></a>获取端口号</h3><p>拿到 IP 之后，接下来就需要获取端口号了。通常情况下，如果 URL 没有特别指明端口号，那么 HTTP 协议默认是 80 端口。（HTTPS协议默认端口为443，FTP默认端口为21，Telnet默认端口为23）</p>
-<h2 id="等待TCP队列"><a href="#等待TCP队列" class="headerlink" title="等待TCP队列"></a>等待TCP队列</h2><p>当我们获得网络请求第一步——TCP连接的条件（IP地址和端口号），还需要等待浏览器的TCP队列为空闲状态才能建立TCP链接</p>
-<h2 id="建立TCP连接"><a href="#建立TCP连接" class="headerlink" title="建立TCP连接"></a>建立TCP连接</h2><p>TCP提供一种可靠的传输，这个过程涉及到三次握手，四次挥手，下面我们详细看看 TCP提供一种面向连接的，可靠的字节流服务。 其首部的数据格式如下</p>
-<p><img src="https://img-blog.csdnimg.cn/20210202093829157.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxOTM0NzQ1,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述" loading="lazy"></p>
-<h3 id="字段分析"><a href="#字段分析" class="headerlink" title="字段分析"></a><strong>字段分析</strong></h3><ul>
-<li>源端口：源端口和IP地址的作用是标识报文的返回地址。</li>
-<li>目的端口：端口指明接收方计算机上的应用程序接口。</li>
-</ul>
-<blockquote>
-<p>TCP报头中的<strong>源端口号</strong>和<strong>目的端口号</strong>同IP数据报中的<strong>源IP</strong>与<strong>目的IP</strong>唯一确定一条TCP连接。</p>
-</blockquote>
-<ul>
-<li>序号：是TCP<strong>可靠传输的关键部分</strong>。序号是该报文段发送的数据组的第一个字节的序号。在TCP传送的流中，每一个字节都有一个序号。比如一个报文段的序号为300，报文段数据部分共有100字节，则下一个报文段的序号为400。所以序号确保了TCP传输的<strong>有序性</strong>。</li>
-<li>确认号：即ack，<strong>指明下一个期待收到的字节序号</strong>，表明该序号之前的所有数据已经正确无误的收到。例：A向B发送数据报文段，B需给A发送一个收到确认报文段来告知A已收到其发来的数据报文段。在B给A发送的确认报文段中，确认号为501，即表明序号1-500的字节已成功收到，接下来期望收到从A发来的序号为501的字节。</li>
-<li>首部长度/数据偏移：占4位，它指出TCP报文的数据距离TCP报文段的起始处有多远。由于首部可能含有可选项内容，因此TCP报头的长度是不确定的，报头不包含任何任选字段则长度为20字节，<strong>4位首部长度字段所能表示的最大值为1111，转化为10进制为15，15*32/8=60，故报头最大长度为60字节。</strong>首部长度也叫数据偏移，是因为首部长度实际上指示了数据区在报文段中的起始偏移值。</li>
-<li>保留：占6位，保留今后使用，但目前应都位0。</li>
-<li>控制位：URG ACK PSH RST SYN FIN，共6个，每一个标志位表示一个控制功能。<ul>
-<li>紧急URG：当URG=1，表明紧急指针字段有效。告诉系统此报文段中有紧急数据</li>
-<li>确认ACK：仅当ACK=1时，确认号字段才有效。TCP规定，在连接建立后所有报文的传输都必须把ACK置1。</li>
-<li>推送PSH：当两个应用进程进行交互式通信时，有时在一端的应用进程希望在键入一个命令后立即就能收到对方的响应，这时候就将PSH=1。</li>
-<li>复位RST：当RST=1，表明TCP连接中出现严重差错，必须释放连接，然后再重新建立连接。</li>
-<li>同步SYN：在连接建立时用来同步序号。当SYN=1，ACK=0，表明是连接请求报文，若同意连接，则响应报文中应该使SYN=1，ACK=1。</li>
-<li>终止FIN：用来释放连接。当FIN=1，表明此报文的发送方的数据已经发送完毕，并且要求释放。</li>
-</ul>
-</li>
-<li>窗口：滑动窗口大小，<strong>用来告知发送端接受端的缓存大小</strong>，以此控制发送端发送数据的速率，<strong>从而达到流量控制</strong>。窗口大小时一个16bit字段，因而窗口大小最大为65535。</li>
-<li>校验和：<strong>奇偶校验</strong>，此校验和是对整个的 TCP 报文段，包括 TCP 头部和 TCP 数据，以 16 位字进行计算所得。由发送端计算和存储，并由接收端进行验证。</li>
-<li>紧急指针：只有当 <strong>URG 标志置 1 时紧急指针才有效</strong>。紧急指针是一个正的偏移量，和顺序号字段中的值相加表示紧急数据最后一个字节的序号。 TCP 的紧急方式是发送端向另一端发送紧急数据的一种方式。</li>
-<li>选项和填充：最常见的可选字段是最长报文大小，又称为MSS（Maximum Segment Size），每个连接方通常都在通信的第一个报文段（为建立连接而设置SYN标志为1的那个段）中指明这个选项，它表示本端所能接受的最大报文段的长度。选项长度不一定是32位的整数倍，所以要加填充位，即在这个字段中加入额外的零，以保证TCP头是32的整数倍。</li>
-<li>数据部分： TCP 报文段中的数据部分是可选的。在一个连接建立和一个连接终止时，双方交换的报文段仅有 TCP 首部。如果一方没有数据要发送，也使用没有任何数据的首部来确认收到的数据。在处理超时的许多情况中，也会发送不带任何数据的报文段。</li>
-</ul>
-<blockquote>
-<p>需要注意的是：</p>
-</blockquote>
-<p>（A）<strong>不要将确认序号ack与标志位中的ACK搞混了。</strong> （B）<strong>确认方ack=发起方Seq+1，两端配对。</strong></p>
-<h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><p><strong>第一次握手</strong>：</p>
-<p>客户端发送syn包(Seq=x)到服务器，并进入SYN_SEND状态，等待服务器确认；</p>
-<p><strong>第二次握手</strong>：</p>
-<p>服务器收到syn包，必须确认客户的SYN（ack=x+1），同时自己也发送一个SYN包（Seq=y），即SYN+ACK包，此时服务器进入SYN_RECV状态；</p>
-<p><strong>第三次握手</strong>：</p>
-<p>客户端收到服务器的SYN＋ACK包，向服务器发送确认包ACK(ack=y+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手。</p>
-<p>握手过程中传送的包里不包含数据，三次握手完毕后，客户端与服务器才正式开始传送数据。<strong>理想状态下，TCP连接一旦建立，在通信双方中的任何一方主动关闭连接之前，TCP 连接都将被一直保持下去。</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/20210202100036836.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxOTM0NzQ1,size_16,color_FFFFFF,t_70#pic_center" alt="三次握手" loading="lazy"></p>
-<p><strong>为什么会采用三次握手，若采用二次握手可以吗？ 四次呢？</strong></p>
-<p>三次握手的目的是确认双方<code>发送</code>和<code>接收</code>的能力</p>
-<p><strong>为什么两次握手不行？</strong></p>
-<p>根本原因: 无法确认客户端的接收能力。</p>
-<p>分析如下:如果是两次，你现在发了 SYN 报文想握手，但是这个包<strong>滞留</strong>在了当前的网络中迟迟没有到达，TCP 以为这是丢了包，于是重传，两次握手建立好了连接。</p>
-<p>看似没有问题，但是连接关闭后，如果这个<strong>滞留</strong>在网路中的包到达了服务端呢？这时候由于是两次握手，服务端只要接收到然后发送相应的数据包，就默认<strong>建立连接</strong>，但是现在客户端已经断开了。</p>
-<p>看到问题的吧，这就带来了连接资源的浪费。</p>
-<p><strong>可以是四次握手吗？</strong></p>
-<p>当然可以，100 次都可以。但为了解决问题，三次就足够了，再多用处就不大了。</p>
-<p>大家应该知道通信中著名的蓝军红军约定， 这个例子说明， 通信不可能100%可靠， 而上面的三次握手已经做好了通信的准备工作， 再增加握手， 并不能显著提高可靠性， 而且也没有必要。</p>
-<h2 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h2><p>一旦建立了 TCP 连接，浏览器就可以和服务器进行通信了。而 HTTP 中的数据正是在这个通信过程中传输的。</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E8%AF%B7%E6%B1%82%E5%A4%B4.png" class="" title="请求头" loading="lazy">
-
-<p><strong>首先</strong>浏览器会向服务器<strong>发送请求行</strong>它包括了<strong>请求方法、请求 URI（Uniform Resource Identifier）和 HTTP 版本协议</strong>。</p>
-<blockquote>
-<p>URI，是uniform resource identifier，统一资源标识符，用来唯一的标识一个资源。 URL是uniform resource locator，统一资源定位器，它是一种具体的URI，即URL可以用来标识一个资源，而且还指明了如何定位到这个资源（协议）。</p>
-</blockquote>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/URI%E4%B8%8EURL%E7%9A%84%E5%85%B3%E7%B3%BB.png" class="" title="URI与URL的关系" loading="lazy">
-
-<p>最常用的请求方法是<strong>GET</strong>和<strong>POST</strong>，如果要通过<strong>POST</strong>方法发送信息给服务器，那么浏览器还要准备数据给服务器，这里准备的数据是通过<strong>请求体</strong>来发送。</p>
-<p>在浏览器发送请求行命令之后，还要以<strong>请求头</strong>形式发送其他一些信息，把浏览器的一些基础信息告诉服务器。比如包含了浏览器所使用的操作系统、浏览器内核等信息，以及当前请求的域名信息、浏览器端的 Cookie 信息，等等。</p>
-<h2 id="服务器处理HTTP请求"><a href="#服务器处理HTTP请求" class="headerlink" title="服务器处理HTTP请求"></a>服务器处理HTTP请求</h2><img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%93%8D%E5%BA%94%E5%A4%B4.png" class="" title="响应头" loading="lazy">
-
-<p>跟发送相同的，首先服务器会返回<strong>响应行</strong>，包括<strong>HTTP协议版本</strong>和<strong>状态码</strong></p>
-<p>但并不是所有的请求都可以被服务器处理的，那么一些无法处理或者处理出错的信息，服务器会通过请求行的<strong>状态码</strong>来告诉浏览器它的处理结果。</p>
-<p>而响应体就是我们后续浏览器进行渲染的<strong>HTML，CSS，JS</strong>文件</p>
-<h2 id="浏览器渲染"><a href="#浏览器渲染" class="headerlink" title="浏览器渲染"></a>浏览器渲染</h2><h3 id="准备渲染进程"><a href="#准备渲染进程" class="headerlink" title="准备渲染进程"></a>准备渲染进程</h3><p>上述都是<strong>浏览器主进程</strong>和<strong>网络进程</strong>干的活了，当接收到http响应头中的content-type类型（<strong>text/html</strong>）时就开始准备渲染进程了</p>
-<p>默认情况下，Chrome 会为<strong>每个页面分配一个渲染进程</strong>，也就是说，每打开一个新页面就会配套创建一个新的渲染进程。但是，也有一些例外，在多个页面同属于一个<strong>根域名</strong>下，浏览器会让多个页面直接运行在同一个渲染进程中。</p>
-<blockquote>
-<p>具体地讲，我们将“<strong>同一站点</strong>”定义为<strong>根域名</strong>（例如，<a target="_blank" rel="noopener" href="http://baidu.com/">baidu.com</a>）加上<strong>协议</strong>（例如，https:// 或者 http://），还包含了该根域名下的所有子域名和不同的端口，比如下面这三个： <a target="_blank" rel="noopener" href="https://baidu.com/">https://baidu.com</a> <a target="_blank" rel="noopener" href="https://image.baidu.com/">https://image.baidu.com</a> <a target="_blank" rel="noopener" href="https://baike.baidu.com/">https://baike.baidu.com</a> 它们都是属于<strong>同一站点</strong>，因为它们的协议都是 HTTPS，<a target="_blank" rel="noopener" href="http://而且根域名也都是baidu.com/">而且根域名也都是baidu.com</a> Chrome 的默认策略是，每个标签对应一个渲染进程。但<strong>如果从一个页面打开了另一个新页面，而新页面和当前页面属于同一站点的话，那么新页面会复用父页面的渲染进程</strong>。官方把这个默认策略叫 process-per-site-instance。</p>
-</blockquote>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BF%9B%E7%A8%8B%E4%BF%A1%E6%81%AF.png" class="" title="浏览器进程信息" loading="lazy">
-
-<p>比如我这打开了4个页面都是运行在同一个渲染进程下，进程ID同为14932</p>
-<h3 id="渲染流程"><a href="#渲染流程" class="headerlink" title="渲染流程"></a>渲染流程</h3><p>服务器HTTP请求返回的响应体的文件（HTML，CSS，JS）浏览器并读不懂，</p>
-<h4 id="1、构建DOM树"><a href="#1、构建DOM树" class="headerlink" title="1、构建DOM树"></a>1、构建DOM树</h4><p>HTML文件需要将这些文件转换成浏览器能够理解的结构——<strong>DOM树</strong></p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/DOM%E6%A0%91.png" class="" title="DOM树" loading="lazy">
-
-<h4 id="2、样式计算"><a href="#2、样式计算" class="headerlink" title="2、样式计算"></a>2、样式计算</h4><p>根据CSS文件进行样式计算，转换成浏览器能够理解的结构——<strong>styleSheets</strong>（所谓的CSSOM），这一步还需要转换样式表中的属性值（<strong>标准化</strong>），比如一些rem，em需要根据对应的字体大小进行等值转换，比如一些颜色值，将会转换成RGB的格式</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%A0%B7%E5%BC%8F%E8%AE%A1%E7%AE%97.png" class="" title="样式计算" loading="lazy">
-
-<p>再将标准化后的<strong>styleSheets</strong>结合到DOM树上，这里涉及CSS的<strong>层叠规则</strong>和<strong>继承规则</strong></p>
-<p>比如一份标准化后的样式表为</p>
-<pre><code class="css">body &#123; font-size: 20px &#125;
-p &#123;color:blue;&#125;
-span  &#123;display: none&#125;
-div &#123;font-weight: bold;color:red&#125;
-div  p &#123;color:green;&#125;
-</code></pre>
-<p>结合到上面的DOM树上计算出来的每个节点的具体样式为</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E8%8A%82%E7%82%B9%E8%AE%A1%E7%AE%97.png" class="" title="节点计算.png} 可以看到，&#96;body节点&#96; 的 &#96;子节点&#96;都继承了body的***font-size为20px***的样式，而 &#96;div节点的左子树的p节点&#96;**继承**了&#96;div节点&#96;的**font-weight为bold**的样式，与此同时用自身的color为green**层叠覆盖**了继承的***color为red*** #### 3、布局阶段（layout） 虽然我们可以通过DOM树了解到页面的元素，通过styleSheets了解到每个节点长啥样，但是我们还是不知道每个节点放哪呀！这个就是布局阶段要做的事情 Chrome 在布局阶段需要完成两个任务：**创建布局树**和**布局计算**。 #### 生成布局树（就是人们说的渲染树） 布局树就是由**DOM树**和**样式计算**生成，遍历DOM树的所有节点，并且通过样式计算能够知道对应的节点是否可见（display：none就不可见啦），并把可见的节点加入到布局树中，而不可见的节点就会被布局树忽略掉。 #### 布局计算 我们页面的渲染并不是一个平面的渲染，而是采用了一个像是PS的图层的概念，多个图层渲染叠加在一起构成了最终的页面图像 比如一些复杂的 3D 变换、页面滚动，或者使用 z-indexing 做 z 轴排序等，为了更加方便地实现这些效果，**渲染引擎还需要为特定的节点生成专用的图层，并生成一棵对应的图层树**（LayerTree）。 {% asset_img 图层.png 图层" loading="lazy">
-
-<p>比如这个掘金，可以看到是由多个图层叠加在一起产生的界面</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%8E%9F%E5%9B%BE.png" class="" title="原图" loading="lazy">
-
-<p>布局树和图层树之间的关系类似于</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%9B%BE%E5%B1%82%E6%A0%91%E5%92%8CDOM%E6%A0%91%E7%9A%84%E5%85%B3%E7%B3%BB.png" class="" title="图层树和DOM树的关系" loading="lazy">
-
-<p>但是并不是每一个布局树上的节点都对应拥有图层树上的一层，如果对应节点没有在图层树上有对应的层级，则该节点归属于<strong>父节点</strong>的图层上</p>
-<h4 id="那布局树上的节点需要具备什么条件才能在图层树上拥有一个图层呢？"><a href="#那布局树上的节点需要具备什么条件才能在图层树上拥有一个图层呢？" class="headerlink" title="那布局树上的节点需要具备什么条件才能在图层树上拥有一个图层呢？"></a>那布局树上的节点需要具备什么条件才能在图层树上拥有一个图层呢？</h4><p>满足以下两个条件之一即可</p>
-<p><strong>第一点，拥有层叠上下文属性的元素会被提升为单独的一层</strong></p>
-<p>页面是个二维平面，但是层叠上下文能够让 HTML 元素具有三维概念，这些 HTML 元素按照自身属性的优先级分布在垂直于这个二维平面的 z 轴上。</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E7%8B%AC%E7%AB%8B%E5%9B%BE%E5%B1%82.png" class="" title="独立图层" loading="lazy">
-
-<p>明确定位属性的元素（position）、定义透明属性的元素（opacity）、使用 CSS 滤镜的元素等（filter），都拥有层叠上下文属性。</p>
-<p><strong>第二点，需要剪裁（clip）的地方也会被创建为图层（overflow）</strong></p>
-<pre><code class="html">&lt;style&gt;
-      div &#123;
-            width: 200;
-            height: 200;
-            overflow:auto;
-            background: gray;
-        &#125; 
-&lt;/style&gt;
-&lt;body&gt;
-    &lt;div &gt;
-        &lt;p&gt; 所以元素有了层叠上下文的属性或者需要被剪裁，那么就会被提升成为单独一层，你可以参看下图：&lt;/p&gt;
-        &lt;p&gt; 从上图我们可以看到，document 层上有 A 和 B 层，而 B 层之上又有两个图层。这些图层组织在一起也是一颗树状结构。&lt;/p&gt;
-        &lt;p&gt; 图层树是基于布局树来创建的，为了找出哪些元素需要在哪些层中，渲染引擎会遍历布局树来创建层树（Update LayerTree）。&lt;/p&gt; 
-    &lt;/div&gt;
-&lt;/body&gt;
-</code></pre>
-<p>这里定义一个div为200*200像素，而div内的文字内容比较多，文字所显示的区域肯定会超出 200 * 200 的面积，这时候就产生了剪裁，渲染引擎会把裁剪文字内容的一部分用于显示在 div 区域</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E8%A7%86%E5%8F%A3%E4%B8%AD%E7%9C%8B%E5%88%B0%E7%9A%84.png" class="" title="视口中看到的" loading="lazy">
-
-<p>出现这种裁剪情况时，渲染引擎会把被裁剪部分独立创造一个图层，如果出现滚动条，滚动条也会被提升为单独的层。</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E5%AE%9E%E9%99%85%E7%9A%84%E5%9B%BE%E5%B1%82%E5%85%B3%E7%B3%BB.png" class="" title="实际的图层关系" loading="lazy">
-
-<h4 id="4、产生绘制列表"><a href="#4、产生绘制列表" class="headerlink" title="4、产生绘制列表"></a>4、产生绘制列表</h4><p>渲染引擎实现图层的绘制，会把一个图层的绘制拆分成很多小的<strong>绘制指令</strong>，然后再把这些指令按照顺序组成一个待绘制列表，</p>
-<p>绘制列表中的指令其实非常简单，就是让其执行一个简单的绘制操作，比如绘制粉色矩形或者黑色的线等。而绘制一个元素通常需要好几条绘制指令，因为每个元素的背景、前景、边框都需要单独的指令去绘制。所以在图层绘制阶段，输出的内容就是这些待绘制列表。</p>
-<h4 id="5、栅格化（raster）操作"><a href="#5、栅格化（raster）操作" class="headerlink" title="5、栅格化（raster）操作"></a>5、栅格化（raster）操作</h4><p>绘制列表只是用来记录绘制顺序和绘制指令的列表，而实际上绘制操作是由渲染引擎中的合成线程来完成的。</p>
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E6%A0%85%E6%A0%BC%E5%8C%96.png" class="" title="栅格化" loading="lazy">
-
-<p>如上图所示，当图层的绘制列表准备好之后，主线程会把该绘制列表<strong>提交（commit）</strong>给合成线程</p>
-<p>通常一个页面可能很大，但是用户只能看到其中的一部分，我们把用户可以看到的这个部分叫做<strong>视口</strong>（viewport）。</p>
-<p>在有些情况下，有的图层可以很大，比如有的页面你使用滚动条要滚动好久才能滚动到底部，但是通过视口，用户只能看到页面的很小一部分，所以在这种情况下，要绘制出所有图层内容的话，就会产生太大的开销，而且也没有必要。</p>
-<p>基于这个原因，<strong>合成线程会将图层划分为图块（tile）</strong></p>
-<h4 id="6、重绘重排"><a href="#6、重绘重排" class="headerlink" title="6、重绘重排"></a>6、重绘重排</h4><img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E9%87%8D%E7%BB%98.png" class="" title="重绘" loading="lazy">
-
-<img src="/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/%E9%87%8D%E6%8E%92.png" class="" title="重排" loading="lazy">
-
-<p>可以看到，重绘的时候由于没有改变元素的集合信息，所以在渲染过程中，会直接跳过布局阶段</p>
-<p>重排（更新了元素的几何属性(宽高)），重绘（更新了元素的绘制属性(颜色)）</p>
-<p><strong>重排一定会重绘，重绘不一定会重排</strong></p>
-<h2 id="断开TCP链接"><a href="#断开TCP链接" class="headerlink" title="断开TCP链接"></a>断开TCP链接</h2><p>通常情况下，一旦服务器向客户端返回了请求数据，它就要关闭 TCP 连接。不过如果浏览器或者服务器在其头信息中加入了：</p>
-<pre><code class="text">Connection:Keep-Alive 
-</code></pre>
-<p>那么 TCP 连接在发送后将仍然保持打开状态，这样浏览器就可以继续通过同一个 TCP 连接发送请求。<strong>保持 TCP 连接可以省去下次请求时需要建立连接的时间，提升资源加载速度</strong>。比如，一个 Web 页面中内嵌的图片就都来自同一个 Web 站点，如果初始化了一个持久连接，你就可以复用该连接，以请求其他资源，而不需要重新再建立新的 TCP 连接。</p>
-<p>如果要关掉，那就在浏览器或者服务器的头信息中加入：</p>
-<pre><code class="text">Connection:close
-</code></pre>
-<h3 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h3><p>数据传输完毕后，双方都可释放连接。最开始的时候，客户端和服务器都是处于ESTABLISHED状态，假设客户端主动关闭，服务器被动关闭。</p>
-<p><img src="https://sanyuan0704.top/tcp/002.jpg" alt="img" loading="lazy"></p>
-<p><strong>第一次挥手</strong>：主动关闭方（客户端）—&gt;被动关闭方（服务器）</p>
-<p>（<em>客户端：我不给你发了</em>）</p>
-<p>客户端发送一个FIN = 1，用来<strong>关闭客户端到服务器的数据传送</strong>，也就是客户端告诉服务器：我已经不会再给你发数据了(当然，在FIN包之前发送出去的数据，如果没有收到对应的ACK确认报文，客户端依然会重发这些数据)，但是，此时<strong>客户端还可以接受数据</strong>。 <strong>FIN=1</strong>，其序列号为<strong>seq=p</strong>（等于前面已经传送过来的数据的最后一个字节的序号加1），此时，客户端进入FIN-WAIT-1（终止等待1）状态。 TCP规定，FIN报文段即使不携带数据，也要消耗一个序号。</p>
-<p><strong>第二次挥手</strong>：服务器—&gt;客户端</p>
-<p>（<em>服务器：我知道啦，但是我有可能要给你发东西，你等一下</em>）</p>
-<p>服务器收到FIN包后，发送一个<strong>ACK = 1</strong>给对方并且带上自己的序列号seq，ack为p+1（与SYN相同，一个FIN占用一个序号）。此时，服务端就进入了CLOSE-WAIT（关闭等待）状态。TCP服务器通知高层的应用进程，<strong>客户端向服务器的方向就释放了</strong>，这时候处于<strong>半关闭状态</strong>，<em>即客户端已经没有数据要发送了，但是服务器若发送数据，客户端依然要接受。</em>这个状态还要持续一段时间，也就是整个CLOSE-WAIT状态持续的时间。</p>
-<p>此时，客户端就进入FIN-WAIT-2（终止等待2）状态，等待服务器发送连接释放报文（在这之前还需要接受服务器发送的最后的数据）。</p>
-<p><strong>第三次挥手</strong>：服务器—&gt;客户端</p>
-<p>（<em>服务器：我也不给你发了</em>）</p>
-<p><strong>服务器发送一个FIN</strong>，用来<strong>关闭服务器到客户端的数据传送</strong>，也就是告诉客户端，我的数据也发送完了，不会再给你发数据了。由于在半关闭状态，服务器<strong>很可能又发送了一些数据</strong>，假定此时的序列号为seq=q，此时，服务器就进入了LAST-ACK（最后确认）状态，等待客户端的确认。</p>
-<p><strong>第四次挥手</strong>：客户器—&gt;服务端</p>
-<p>（<em>客户端：我听着先，服务器你确定没话说了吧，我等你2MSL，等完我就关闭了</em>）</p>
-<p>主动关闭方收到FIN后，发送一个ACK给被动关闭方，确认序号为收到序号+1，此时，客户端就进入了TIME-WAIT（时间等待）状态。注意此时TCP连接还没有释放，必须经过2∗MSL（最长报文段寿命）的时间后，当客户端撤销相应的TCB（Transmission Control Block  传输控制块）后，才进入CLOSED状态。</p>
-<blockquote>
-<p>同一个设备对应一个IP，每与一个应用程序进行数据传输，都需要一个不被占用的端口去进行通信，这难免会出现在同一时刻，设备可能会产生多种数据需要分发给不同的设备，为了确保数据能够正确分发，TCP用一种叫做TCB，也叫<strong>传输控制块</strong>的数据结构把发给不同设备的数据封装起来，TCB中包含了**发送方和接收方的socket信息（大概就是IP和端口）**和**数据的缓冲区**，从而保证同步通信能够不出错</p>
-</blockquote>
-<p>服务器只要收到了客户端发出的确认，立即进入CLOSED状态。同样，撤销TCB后，就结束了这次的TCP连接。可以看到，服务器结束TCP连接的时间要比客户端早一些。</p>
-<p>至此，完成四次挥手。</p>
-<p><strong>为什么客户端最后还要等待2MSL？</strong></p>
-<p>最长报文寿命MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同的MSL值。</p>
-<p>如果不等待会怎样？</p>
-<p>如果不等待，客户端直接跑路，当<strong>服务端还有很多数据包要给客户端发，且还在路上的时候</strong>，若客户端的端口此时刚好被新的应用占用，那么就接收到了无用数据包，造成数据包混乱。所以，最保险的做法是等服务器发来的数据包都死翘翘再启动新的应用。</p>
-<p>那，照这样说一个 MSL 不就不够了吗，为什么要等待 2 MSL?</p>
-<ul>
-<li>1 个 MSL 确保四次挥手中主动关闭方最后的 ACK 报文最终能达到对端</li>
-<li>1 个 MSL 确保对端没有收到 ACK 重传的 FIN 报文可以到达</li>
-<li>如果直到2MSL之后，客户端都没有再次收到FIN，那么客户端推断ACK已经被成功接收，则结束TCP连接。</li>
-</ul>
-<p>这就是等待 2MSL 的意义。</p>
-<p><strong>为什么建立连接是三次握手，关闭连接确是四次挥手呢？</strong></p>
-<p>因为服务端在接收到<code>FIN</code>, 往往不会立即返回<code>FIN</code>, 必须等到服务端所有的报文都发送完毕了，才能发<code>FIN</code>。因此先发一个<code>ACK</code>表示已经收到客户端的<code>FIN</code>，延迟一段时间才发<code>FIN</code>。这就造成了四次挥手。</p>
-<p><strong>如果是三次挥手会有什么问题？</strong></p>
-<p>等于说服务端将<code>ACK</code>和<code>FIN</code>的发送合并为一次挥手，这个时候长时间的延迟可能会导致客户端误以为<code>FIN</code>没有到达客户端，从而让客户端不断的重发<code>FIN</code>。</p>
-</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/" title="输入URL后发生了什么">https://zzzjx0912.github.io/2022/04/06/%E8%BE%93%E5%85%A5URL%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2022/04/07/brower-caching/" rel="prev" title="浏览器缓存"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">浏览器缓存</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/10/25/JSAPI/" rel="next" title="JSAPI"><span class="post-nav-text">JSAPI</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v6.1.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.11</span></div><div class="live-time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2020-07-12T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div><div id="busuanzi"><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
-  const date = new Date();
-  const today = (date.getMonth() + 1) + "-" + date.getDate()
-  const mourn_days = ["4-4","9-18"]
-  if (mourn_days.includes(today)) {
-    document.documentElement.style.filter = "grayscale(1)";
-  }
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
 }
-initMourn();</script></div></body></html>
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 0.5rem 5rem 1rem 5rem;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+mobile()
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}

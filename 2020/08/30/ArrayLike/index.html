@@ -1,146 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 6.1.0"><meta name="theme" content="hexo-theme-yun"><title>类数组和arguments | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".markdown-body img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" type="image/png" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    window.Yun = {}
-    window.CONFIG = {"hostname":"zzzjx0912.github.io","root":"/","title":"ZJX的小破站","version":"1.8.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":null},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
-  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><script>(function(){
-  var bp = document.createElement('script');
-  var curProtocol = window.location.protocol.split(':')[0];
-  if (curProtocol === 'https') {
-    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else {
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(bp, s);
-})();</script><meta name="description" content="argument对象为什么argument不是数组？因为argument是一个对象，只不过它的属性从0开始排，依次为0，1，2…最后还有callee和length属性。我们也把这样的对象称为类数组。 初识argumentsarguments是一个类数组，表示传给function的参数列表 比如： function demo()&amp;#123;     console.log(arguments); &amp;">
-<meta property="og:type" content="article">
-<meta property="og:title" content="类数组和arguments">
-<meta property="og:url" content="https://zzzjx0912.github.io/2020/08/30/ArrayLike/index.html">
-<meta property="og:site_name" content="ZJX&#39;s Blog">
-<meta property="og:description" content="argument对象为什么argument不是数组？因为argument是一个对象，只不过它的属性从0开始排，依次为0，1，2…最后还有callee和length属性。我们也把这样的对象称为类数组。 初识argumentsarguments是一个类数组，表示传给function的参数列表 比如： function demo()&amp;#123;     console.log(arguments); &amp;">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-08-30T13:19:05.000Z">
-<meta property="article:modified_time" content="2020-09-19T10:10:22.000Z">
-<meta property="article:author" content="ZJX">
-<meta property="article:tag" content="JavaScript">
-<meta name="twitter:card" content="summary"><script>(function() {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const setting = localStorage.getItem('darken-mode') || 'auto'
-  if (setting === 'dark' || (prefersDark && setting !== 'light'))
-    document.documentElement.classList.toggle('dark', true)
-})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><span class="site-name">ZJX's Blog</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">31</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#argument%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">argument对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88argument%E4%B8%8D%E6%98%AF%E6%95%B0%E7%BB%84%EF%BC%9F"><span class="toc-number">1.0.1.</span> <span class="toc-text">为什么argument不是数组？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E8%AF%86arguments"><span class="toc-number">1.0.2.</span> <span class="toc-text">初识arguments</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#argument%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.0.3.</span> <span class="toc-text">argument的操作</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#arguments-length"><span class="toc-number">1.0.3.0.1.</span> <span class="toc-text">arguments.length</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#arguments%E8%BD%AC%E6%95%B0%E7%BB%84"><span class="toc-number">1.0.3.0.2.</span> <span class="toc-text">arguments转数组</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Array-prototype-slice-call"><span class="toc-number">1.0.3.0.2.1.</span> <span class="toc-text">Array.prototype.slice.call()</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Array-from"><span class="toc-number">1.0.3.0.2.2.</span> <span class="toc-text">Array.from()</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ES6%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.0.3.0.2.3.</span> <span class="toc-text">ES6的扩展运算符</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#concat-apply%E7%9A%84%E6%96%B9%E6%B3%95%E2%80%94%E2%80%94-gt-%E4%B8%8A%E9%9D%A2%E7%9A%84%E6%96%B9%E6%B3%95%E7%9A%84ES5%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="toc-number">1.0.3.0.2.4.</span> <span class="toc-text">concat+apply的方法——&gt;上面的方法的ES5的体现</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/08/30/ArrayLike/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">类数组和arguments</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-08-30 21:19:05" itemprop="dateCreated datePublished" datetime="2020-08-30T21:19:05+08:00">2020-08-30</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-09-19 18:10:22" itemprop="dateModified" datetime="2020-09-19T18:10:22+08:00">2020-09-19</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/JavaScript/" style="--text-color:#F4DF4F"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="argument对象"><a href="#argument对象" class="headerlink" title="argument对象"></a>argument对象</h1><h3 id="为什么argument不是数组？"><a href="#为什么argument不是数组？" class="headerlink" title="为什么argument不是数组？"></a>为什么argument不是数组？</h3><p>因为argument是一个对象，只不过它的属性从0开始排，依次为0，1，2…最后还有callee和length属性。我们也把这样的对象称为类数组。</p>
-<h3 id="初识arguments"><a href="#初识arguments" class="headerlink" title="初识arguments"></a>初识arguments</h3><p>arguments是一个类数组，表示传给function的参数列表</p>
-<p>比如：</p>
-<pre><code class="javascript">function demo()&#123;
-    console.log(arguments);
-&#125;
-demo(&quot;a&quot;,&quot;A&quot;,0,&#123;foo:&quot;Hello!world&quot;&#125;)
-</code></pre>
-<p>执行结果是:</p>
-<p>Arguments(4) [“a”, “A”, 0, {…}, callee: ƒ, Symbol(Symbol.iterator): ƒ]</p>
-<p>控制台打印出来一个数组，包含着传入函数的实参，但是这并不是一个数组，所以说arguments是一个类数组的对象。</p>
-<hr>
-<p><strong>类数组</strong>的属性必须有：属性必须为索引（数字）属性，必须有length属性，最好加上push属性</p>
-<p><strong>但是</strong>并不是所有的数组方法都可以直接用，除非自身给他增加方法。</p>
-<p>比如：</p>
-<pre><code class="javascript">obj = &#123;
-    &quot;0&quot; : &#39;a&#39;,
-    &quot;1&quot; : &#39;b&#39;, 
-    &quot;2&quot; : &#39;c&#39;,
-    &quot;length&quot; : 3,
-    &quot;push&quot; : Array.prototype.push 
-&#125;
-</code></pre>
-<p>首先<strong>明确一点</strong>，类数组属于对象和数组之间的领域（虽然数组本来就是特殊的对象），他既拥有对象的存储能力也拥有数组的存储能力。</p>
-<p>有一个例题：</p>
-<pre><code class="javascript">obj = &#123;
-    &quot;2&quot; : &quot;a&quot;,
-    &quot;3&quot; : &quot;b&quot;,
-    &quot;4&quot; : &quot;c&quot;,
-    &quot;length&quot; : 3,
-    &quot;push&quot; : Array.prototype.push
-&#125;
-obj.push(&quot;d&quot;);
-obj.push(&quot;e&quot;);
-</code></pre>
-<p>问：最后obj的结构是什么？</p>
-<p>首先我们要弄清楚push的原理，push是数组Array的一个改变原数组的方法，<em>是在数组末端添加一个数，然后length加一</em>，那么我们可以把push理解为：</p>
-<pre><code class="javascript">Array.prototype.push = function (target)&#123;
-    this[this.length] = target;
-    this.length++
-&#125;
-</code></pre>
-<p>我们先了解这个之后然后这道题就简单多了，那么答案就是</p>
-<pre><code class="javascript">obj = &#123;
-    &quot;2&quot; : &quot;a&quot;,
-    &quot;3&quot; : &quot;d&quot;,
-    &quot;4&quot; : &quot;e&quot;,
-    &quot;length&quot; : 5,
-    &quot;push&quot; : Array.prototype.push
-&#125;
-</code></pre>
-<h3 id="argument的操作"><a href="#argument的操作" class="headerlink" title="argument的操作"></a>argument的操作</h3><h5 id="arguments-length"><a href="#arguments-length" class="headerlink" title="arguments.length"></a>arguments.length</h5><pre><code class="javascript">function func()&#123;
-    console.log(&quot;传入参数有&quot;+arguments.length+&quot;个&quot;)
-&#125;
-func();
-func(1,2);
-func(0,123,12);
-</code></pre>
-<p>执行结果为：</p>
-<p>传入参数有0个<br>传入参数有2个<br>传入参数有3个</p>
-<h5 id="arguments转数组"><a href="#arguments转数组" class="headerlink" title="arguments转数组"></a>arguments转数组</h5><h6 id="Array-prototype-slice-call"><a href="#Array-prototype-slice-call" class="headerlink" title="Array.prototype.slice.call()"></a>Array.prototype.slice.call()</h6><p>还可以写作<code>[].slice.call(arguments);</code></p>
-<pre><code class="js">function sum(a, b) &#123;
-  let args = Array.prototype.slice.call(arguments);
-  console.log(args.reduce((sum, cur) =&gt; sum + cur));//args可以调用数组原生的方法啦
-&#125;
-sum(1, 2);//3
-</code></pre>
-<h6 id="Array-from"><a href="#Array-from" class="headerlink" title="Array.from()"></a>Array.from()</h6><pre><code class="js">function sum(a, b) &#123;
-  let args = Array.from(arguments);
-  console.log(args.reduce((sum, cur) =&gt; sum + cur));//args可以调用数组原生的方法啦
-&#125;
-sum(1, 2);//3
-</code></pre>
-<h6 id="ES6的扩展运算符"><a href="#ES6的扩展运算符" class="headerlink" title="ES6的扩展运算符"></a>ES6的扩展运算符</h6><pre><code class="js">function sum(a, b) &#123;
-  let args = [...arguments];  //args——&gt;[a,b]
-  console.log(args.reduce((sum, cur) =&gt; sum + cur));//args可以调用数组原生的方法啦
-&#125;
-sum(1, 2);//3
-</code></pre>
-<h6 id="concat-apply的方法——-gt-上面的方法的ES5的体现"><a href="#concat-apply的方法——-gt-上面的方法的ES5的体现" class="headerlink" title="concat+apply的方法——&gt;上面的方法的ES5的体现"></a>concat+apply的方法——&gt;上面的方法的ES5的体现</h6><pre><code class="js">function sum(a, b) &#123;
-  let args = Array.prototype.concat.apply([], arguments);//apply方法会把第二个参数展开
-  console.log(args.reduce((sum, cur) =&gt; sum + cur));//args可以调用数组原生的方法啦
-&#125;
-sum(1, 2);//3
-</code></pre>
-</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/08/30/ArrayLike/" title="类数组和arguments">https://zzzjx0912.github.io/2020/08/30/ArrayLike/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/09/06/dom/" rel="prev" title="dom基础"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">dom基础</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/07/16/something/" rel="next" title="浅谈call和apply与继承模式"><span class="post-nav-text">浅谈call和apply与继承模式</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v6.1.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.11</span></div><div class="live-time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2020-07-12T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div><div id="busuanzi"><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
-  const date = new Date();
-  const today = (date.getMonth() + 1) + "-" + date.getDate()
-  const mourn_days = ["4-4","9-18"]
-  if (mourn_days.includes(today)) {
-    document.documentElement.style.filter = "grayscale(1)";
-  }
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
 }
-initMourn();</script></div></body></html>
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 0.5rem 5rem 1rem 5rem;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+mobile()
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}

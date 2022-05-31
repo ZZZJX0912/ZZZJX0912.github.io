@@ -1,219 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 6.1.0"><meta name="theme" content="hexo-theme-yun"><title>原型和原型链 | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".markdown-body img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" type="image/png" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    window.Yun = {}
-    window.CONFIG = {"hostname":"zzzjx0912.github.io","root":"/","title":"ZJX的小破站","version":"1.8.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":null},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
-  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><script>(function(){
-  var bp = document.createElement('script');
-  var curProtocol = window.location.protocol.split(':')[0];
-  if (curProtocol === 'https') {
-    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else {
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(bp, s);
-})();</script><meta name="description" content="原型JavaScript三大基础——原型链，闭包，作用域 今天！原型它来了！ 原型(object.prototype)是函数function的一个属性，它定义了该构造函数new出来对象的公共属性，new出来的对象可以继承该原型的属性和方法。(原型是该构造函数new出来对象的爹或者说祖先) 构造函数和普通函数的区别只有书写的区别（大驼峰式书写方法：所有单词首字母大写），普通函数用小驼峰书写方法（第一">
-<meta property="og:type" content="article">
-<meta property="og:title" content="原型和原型链">
-<meta property="og:url" content="https://zzzjx0912.github.io/2020/07/06/proto/index.html">
-<meta property="og:site_name" content="ZJX&#39;s Blog">
-<meta property="og:description" content="原型JavaScript三大基础——原型链，闭包，作用域 今天！原型它来了！ 原型(object.prototype)是函数function的一个属性，它定义了该构造函数new出来对象的公共属性，new出来的对象可以继承该原型的属性和方法。(原型是该构造函数new出来对象的爹或者说祖先) 构造函数和普通函数的区别只有书写的区别（大驼峰式书写方法：所有单词首字母大写），普通函数用小驼峰书写方法（第一">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/07/06/proto/caniuseproto.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/07/06/proto/proto1.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/07/06/proto/proto_list.jpg">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/07/06/proto/return.png">
-<meta property="article:published_time" content="2020-07-06T15:06:23.000Z">
-<meta property="article:modified_time" content="2020-11-18T06:47:47.000Z">
-<meta property="article:author" content="ZJX">
-<meta property="article:tag" content="JavaScript">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zzzjx0912.github.io/2020/07/06/proto/caniuseproto.png"><script>(function() {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const setting = localStorage.getItem('darken-mode') || 'auto'
-  if (setting === 'dark' || (prefersDark && setting !== 'light'))
-    document.documentElement.classList.toggle('dark', true)
-})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><span class="site-name">ZJX's Blog</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">31</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">原型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">检测方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#isPrototypeOf%EF%BC%88%E5%8E%9F%E5%9E%8B%E4%BA%8E%E2%80%A6%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">isPrototypeOf（原型于…）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#instanceof%EF%BC%88%E5%AE%9E%E4%BE%8B%E4%BA%8E%E2%80%A6%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">instanceof（实例于…）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#instanceOf%E4%B8%8EisPrototypeOf%E7%AE%80%E5%8D%95%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">instanceOf与isPrototypeOf简单总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hasOwnProperty-NaN"><span class="toc-number">1.1.3.</span> <span class="toc-text">hasOwnProperty</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="toc-number">2.</span> <span class="toc-text">原型链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%94%9FJS%E5%AE%9E%E7%8E%B0new%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">2.0.1.</span> <span class="toc-text">原生JS实现new的过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%9B%E8%A1%8C%E8%BF%94%E5%9B%9E%E5%80%BC%E5%88%A4%E6%96%AD%EF%BC%9F"><span class="toc-number">2.0.1.1.</span> <span class="toc-text">为什么要进行返回值判断？</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/07/06/proto/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">原型和原型链</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-07-06 23:06:23" itemprop="dateCreated datePublished" datetime="2020-07-06T23:06:23+08:00">2020-07-06</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-18 14:47:47" itemprop="dateModified" datetime="2020-11-18T14:47:47+08:00">2020-11-18</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/JavaScript/" style="--text-color:#F4DF4F"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h1><p>JavaScript三大基础——<strong>原型链，闭包，作用域</strong></p>
-<p>今天！<strong>原型</strong>它来了！</p>
-<p><strong>原型</strong>(object.prototype)是函数function的一个属性，<strong>它定义了该构造函数new出来对象的公共属性</strong>，new出来的对象可以继承该原型的属性和方法。(原型是该构造函数new出来对象的爹或者说祖先)</p>
-<p><u><strong>构造函数</strong>和普通函数的区别只有<strong>书写的区别</strong></u>（大驼峰式书写方法：所有单词首字母大写），普通函数用小驼峰书写方法（第一个单词首字母小写，剩下单词首字母大写）。</p>
-<p>构造函数new出来的对象实例是相互独立且相同的（<em>同一个模子刻出来的，构造函数就是模子，new出来的对象实例就是工艺品，长得都一样，但是相互独立，是不同的个体</em>）</p>
-<p><strong>注意！！</strong><a target="_blank" rel="noopener" href="https://yushen7.github.io/blog/">宇神</a>曾教导我：<br><strong>（1）函数function是对象，但是对象不是函数！而原型本身也是个对象</strong>  。</p>
-<p><strong>（2）当实例对象new出来以后，constructor就只是指向构造函数的指针<em>指向存储构造函数的空间</em>，[[proto]]就是指向原型prototype的指针<em>指向存储原型的空间</em>。</strong></p>
-<p>（3）[[proto]]是在es规范里的写法，而__ proto__是个别浏览器的实现，但指代的都是指向原型的指针</p>
-<p>ps：根据<a target="_blank" rel="noopener" href="https://www.caniuse.com/#search=__proto__">数据来源</a>得知现在基本所有浏览器都可以接受__ proto__这个写法</p>
-<img src="/2020/07/06/proto/caniuseproto.png" class="" title="proto" loading="lazy">
-
-<p>但是这是一种可能要被废弃的写法，还是早点改吧hhhhhh</p>
-<hr>
-<p>使用原型提取构造函数公有属性可以减少new对象时代码的冗余：</p>
-<pre><code class="javascript">//不使用原型时
-function Car(color, ownerName)&#123;
-    /*下面三行就是每new一次对象都要执行一次的用于代码*/
-    this.carName = &quot;Honda&quot;;
-    this.height = &quot;1400&quot;;
-    this.length = &quot;4900&quot;;
-    
-    this.color = color;
-    this.ownerName = ownerName;
-&#125;
-var a = new Car(red, ZJX);
-var b = new Car(black ,Eason);
-
-//使用原型后
-Car.prototype = &#123;
-    carName = &quot;Honda&quot;,
-    height = &quot;1400&quot;,
-    length = &quot;4900&quot;,
-&#125;
-function Car(color, ownerName)&#123;
-    this.color = color;
-    this.ownerName = ownerName;
-&#125;
-var a = new Car(red, ZJX);
-var b = new Car(black ,Eason);
-</code></pre>
-<h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><h3 id="isPrototypeOf（原型于…）"><a href="#isPrototypeOf（原型于…）" class="headerlink" title="isPrototypeOf（原型于…）"></a>isPrototypeOf（原型于…）</h3><p>作用：检测一个对象是否是另一个对象的原型。或者说一个对象是否被包含在另一个对象的<strong>原型链</strong>中</p>
-<p>例子：</p>
-<p><strong>（用new创建对象）</strong></p>
-<pre><code class="js">function Grand()&#123;
-    //一些属性或方法
-&#125;
-var grand = new Grand;
-
-Father.prototype = grand;
-function Father()&#123;
-    //一些属性或方法
-&#125;
-var father = new Father;
-
-Son.prototype = father;
-function Son()&#123;
-    //一些属性或方法
-&#125;
-var son = new Son;
-
-Son.prototype.isPrototypeof(son) ----&gt;true
-Father.prototype.isPrototypeof(son) ----&gt;true
-Grand.prototype.isPrototypeof(son) ----&gt;true
-Object.prototype.isPrototypeOf(son) ----&gt;true
-</code></pre>
-<p><strong>（用create创建对象）</strong></p>
-<pre><code class="javascript">var p = &#123;x:1&#125;;//定义一个原型对象
-var o = Object.create(p);//使用这个原型创建一个对象
-//这就没有构造函数的概念了，直接用p去create o，o继承于p
-p.isPrototypeOf(o);//=&gt;true： o继承于p
-Object.prototype.isPrototypeOf(p);//=&gt; true p继承自Object.prototype
-</code></pre>
-<p>综合上面的两个例子，我们发现在调用<code>isPrototypeOf()</code>的时候有三种方式</p>
-<pre><code class="js">p.isPrototypeOf(o);//=&gt;true
-Object.prototype.isPrototypeOf(p);
-Animal.prototype.isPrototypeOf(eh)//=&gt;true
-</code></pre>
-<blockquote>
-<p>总结一下就是：<br> 通过<code>Object.create()</code>创建的对象使用第一个参数作为原型<br> 通过对象直接量的对象使用<code>Object.prototype</code>作为原型<br> 通过<code>new</code>创建的对象使用构造函数的<code>prototype</code>属性作为原型</p>
-</blockquote>
-<h3 id="instanceof（实例于…）"><a href="#instanceof（实例于…）" class="headerlink" title="instanceof（实例于…）"></a>instanceof（实例于…）</h3><p><strong><code>instanceof</code></strong> <strong>运算符</strong>用于检测构造函数的 <code>prototype</code> 属性是否出现在某个实例对象的<strong>原型链</strong>上。</p>
-<p>instanceof运算符希望左操作数是一个对象实例，右操作数是一个构造函数。如果左侧对象是右侧的实例，则表达式返回为true，否则返回false。</p>
-<pre><code class="js">// 判断 foo 是否是 Foo 类的实例 , 并且是否是其父类型的实例
- function Aoo()&#123;&#125;
- function Foo()&#123;&#125;
- Foo.prototype = new Aoo();//JavaScript 原型继承
-
- var foo = new Foo();
- console.log(foo instanceof Foo)//true
- console.log(foo instanceof Aoo)//true
-</code></pre>
-<p>上面的代码中是判断了一层继承关系中的父类，在多层继承关系中，instanceof 运算符同样适用。</p>
-<h4 id="instanceOf与isPrototypeOf简单总结"><a href="#instanceOf与isPrototypeOf简单总结" class="headerlink" title="instanceOf与isPrototypeOf简单总结"></a>instanceOf与isPrototypeOf简单总结</h4><ul>
-<li>如果实例A instanceof 构造函数B为<code>True</code>，那么B.prototype.isPrototypeof(A)一定为<code>True</code>（针对于用构造函数new出来产生的原型链）</li>
-<li>由于isPrototypeof是prototype上的属性，所以new Object()和Object.create()出来对象的结果在isPrototypeof会有不同。</li>
-</ul>
-<h3 id="hasOwnProperty-NaN"><a href="#hasOwnProperty-NaN" class="headerlink" title="hasOwnProperty"></a>hasOwnProperty</h3><p><code>hasOwnProperty()</code> 方法会返回一个布尔值，指示对象自身属性中是否具有指定的属性（也就是，是否有指定的键）。</p>
-<pre><code class="js">const object1 = &#123;&#125;;
-object1.property1 = 42;
-console.log(object1.hasOwnProperty(&#39;property1&#39;));   // expected output: true
-console.log(object1.hasOwnProperty(&#39;toString&#39;));    // expected output: false
-</code></pre>
-<h1 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h1><img src="/2020/07/06/proto/proto1.png" class="" title="proto1" loading="lazy">
-
-<p><strong>注意：Object.prototype是所有对象原型链的终端！！</strong></p>
-<pre><code class="javascript">function Grand()&#123;
-    //一些属性或方法
-&#125;
-var grand = new Grand;
-
-Father.prototype = grand;
-function Father()&#123;
-    //一些属性或方法
-&#125;
-var father = new Father;
-
-Son.prototype = father;
-function Son()&#123;
-    //一些属性或方法
-&#125;
-var son = new Son;
-</code></pre>
-<img src="/2020/07/06/proto/proto_list.jpg" class="" title="proto_list" loading="lazy">
-
-<p>原型链的增删改只能自身权限增删改，下级（子辈）没有权限增删改，下级的增删改只能增删改自身的（晚辈没权利玩弄祖先的玩意儿，只能看看）</p>
-<h3 id="原生JS实现new的过程"><a href="#原生JS实现new的过程" class="headerlink" title="原生JS实现new的过程"></a>原生JS实现new的过程</h3><pre><code class="JS">/**
- * 
- * @param  fn 构造函数
- * @param  arg 传入的形参
- */
-function _mynew(fn, ...args) &#123;
-    const t = typeof(fn)
-    //判断fn是否为一个函数（先判断为函数再判断是否能被new的函数）
-    if(t !== &quot;function&quot;)&#123;
-        throw new TypeError(&#39;$&#123;t&#125; must be a function&#39;)
-    &#125;
-    //1. 新建一个对象
-    let _this = Object.create(fn.prototype);  //由fn.prototype作为原型去新建一个对象
-    //2. 将实例的__proto__指向构造函数的prototype
-    Object.setPrototypeOf(_this, fn.prototype);
-    //3. 设置实例的constructor
-    _this.constructor = fn;
-    //4. 通过apply构造函数来传参
-    const result = fn.apply (_this,args);
-    //5.返回值判断(return值如果为引用值，则改变为其本身)
-    if(result&amp;&amp;(typeof result === &quot;object&quot;||typeof result === &quot;function&quot;))&#123;
-        return result
-    &#125;
-    return _this;
-&#125;
-</code></pre>
-<h4 id="为什么要进行返回值判断？"><a href="#为什么要进行返回值判断？" class="headerlink" title="为什么要进行返回值判断？"></a>为什么要进行返回值判断？</h4><img src="/2020/07/06/proto/return.png" class="" title="return" loading="lazy">
-
-</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/07/06/proto/" title="原型和原型链">https://zzzjx0912.github.io/2020/07/06/proto/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/07/16/something/" rel="prev" title="浅谈call和apply与继承模式"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">浅谈call和apply与继承模式</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/06/29/let-const/" rel="next" title=""><span class="post-nav-text"></span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v6.1.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.11</span></div><div class="live-time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2020-07-12T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div><div id="busuanzi"><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
-  const date = new Date();
-  const today = (date.getMonth() + 1) + "-" + date.getDate()
-  const mourn_days = ["4-4","9-18"]
-  if (mourn_days.includes(today)) {
-    document.documentElement.style.filter = "grayscale(1)";
-  }
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
 }
-initMourn();</script></div></body></html>
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 0.5rem 5rem 1rem 5rem;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+mobile()
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}

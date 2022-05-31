@@ -1,262 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 6.1.0"><meta name="theme" content="hexo-theme-yun"><title>MapandSet | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".markdown-body img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" type="image/png" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    window.Yun = {}
-    window.CONFIG = {"hostname":"zzzjx0912.github.io","root":"/","title":"ZJX的小破站","version":"1.8.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":null},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
-  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><script>(function(){
-  var bp = document.createElement('script');
-  var curProtocol = window.location.protocol.split(':')[0];
-  if (curProtocol === 'https') {
-    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else {
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(bp, s);
-})();</script><meta name="description" content="本文主要做一个总结笔记，大部分参考于现代JavaScript教程 大体的理解是：Map可以看做是一个不限定键的类型的对象，Set是一个只有值的集合数组 Map and Set（映射和集合）我们已经了解了以下复杂的数据结构：  存储带键的数据（keyed）集合的对象。 存储有序集合的数组。  但这还不足以应对现实情况。这就是为什么存在 Map 和 Set。 MapMap是一个带键的数据项的集合，就像">
-<meta property="og:type" content="article">
-<meta property="og:title" content="MapandSet">
-<meta property="og:url" content="https://zzzjx0912.github.io/2020/09/28/MapandSet/index.html">
-<meta property="og:site_name" content="ZJX&#39;s Blog">
-<meta property="og:description" content="本文主要做一个总结笔记，大部分参考于现代JavaScript教程 大体的理解是：Map可以看做是一个不限定键的类型的对象，Set是一个只有值的集合数组 Map and Set（映射和集合）我们已经了解了以下复杂的数据结构：  存储带键的数据（keyed）集合的对象。 存储有序集合的数组。  但这还不足以应对现实情况。这就是为什么存在 Map 和 Set。 MapMap是一个带键的数据项的集合，就像">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-09-28T14:26:02.000Z">
-<meta property="article:modified_time" content="2020-11-02T11:56:23.000Z">
-<meta property="article:author" content="ZJX">
-<meta property="article:tag" content="JavaScript">
-<meta name="twitter:card" content="summary"><script>(function() {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const setting = localStorage.getItem('darken-mode') || 'auto'
-  if (setting === 'dark' || (prefersDark && setting !== 'light'))
-    document.documentElement.classList.toggle('dark', true)
-})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><span class="site-name">ZJX's Blog</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">31</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Map-and-Set%EF%BC%88%E6%98%A0%E5%B0%84%E5%92%8C%E9%9B%86%E5%90%88%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">Map and Set（映射和集合）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">1.1.</span> <span class="toc-text">Map</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Map-%E8%BF%AD%E4%BB%A3"><span class="toc-number">1.1.1.</span> <span class="toc-text">Map 迭代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E8%BD%ACMap%EF%BC%88Object-entries%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">对象转Map（Object.entries）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E8%BD%AC%E5%AF%B9%E8%B1%A1%EF%BC%88Object-fromEntries%EF%BC%89"><span class="toc-number">1.1.3.</span> <span class="toc-text">Map转对象（Object.fromEntries）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Set"><span class="toc-number">1.2.</span> <span class="toc-text">Set</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Set-%E8%BF%AD%E4%BB%A3%EF%BC%88iteration%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">Set 迭代（iteration）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Set%E5%92%8C%E6%95%B0%E7%BB%84%E4%BA%92%E6%8D%A2"><span class="toc-number">1.2.2.</span> <span class="toc-text">Set和数组互换</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81array-%E2%80%93-gt-set-%EF%BC%88%E6%95%B0%E7%BB%84%E8%BD%ACset%EF%BC%89"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1、array –&gt; set （数组转set）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81set-%E2%80%93-gt-array"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">2、set –&gt; array</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/09/28/MapandSet/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">MapandSet</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-09-28 22:26:02" itemprop="dateCreated datePublished" datetime="2020-09-28T22:26:02+08:00">2020-09-28</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-02 19:56:23" itemprop="dateModified" datetime="2020-11-02T19:56:23+08:00">2020-11-02</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/JavaScript/" style="--text-color:#F4DF4F"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>本文主要做一个总结笔记，大部分参考于<a target="_blank" rel="noopener" href="https://zh.javascript.info/map-set">现代JavaScript教程</a></p>
-<p>大体的理解是：Map可以看做是一个不限定键的类型的对象，Set是一个只有值的集合数组</p>
-<h1 id="Map-and-Set（映射和集合）"><a href="#Map-and-Set（映射和集合）" class="headerlink" title="Map and Set（映射和集合）"></a>Map and Set（映射和集合）</h1><p>我们已经了解了以下复杂的数据结构：</p>
-<ul>
-<li>存储带键的数据（keyed）集合的对象。</li>
-<li>存储有序集合的数组。</li>
-</ul>
-<p>但这还不足以应对现实情况。这就是为什么存在 <code>Map</code> 和 <code>Set</code>。</p>
-<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p><code>Map</code>是一个带键的数据项的集合，就像一个 <code>Object</code> 一样。 但是它和<code>Object</code>最大的差别是 <code>Map</code> 允许任何类型的键（key）。</p>
-<p>它的方法和属性如下：</p>
-<ul>
-<li><code>new Map()</code> —— 创建 map。</li>
-<li><code>map.set(key, value)</code> —— 根据键存储值。</li>
-<li><code>map.get(key)</code> —— 根据键来返回值，如果 <code>map</code> 中不存在对应的 <code>key</code>，则返回 <code>undefined</code>。</li>
-<li><code>map.has(key)</code> —— 如果 <code>key</code> 存在则返回 <code>true</code>，否则返回 <code>false</code>。</li>
-<li><code>map.delete(key)</code> —— 删除指定键的值。</li>
-<li><code>map.clear()</code> —— 清空 map。</li>
-<li><code>map.size</code> —— 返回当前元素个数。</li>
-</ul>
-<p>举个例子：（<strong>画重点</strong>：Map会保留键的数据类型）</p>
-<pre><code class="javascript">let map = new Map();
-
-map.set(&#39;1&#39;, &#39;str1&#39;);   // 字符串键
-map.set(1, &#39;num1&#39;);     // 数字键
-map.set(true, &#39;bool1&#39;); // 布尔值键
-
-// 还记得普通的 Object 吗? 它会将键转化为字符串
-// Map 则会保留键的类型，所以下面这两个结果不同：
-alert( map.get(1)   ); // &#39;num1&#39;
-alert( map.get(&#39;1&#39;) ); // &#39;str1&#39;
-
-alert( map.size ); // 3
-</code></pre>
-<p><strong>注意</strong>:<strong><code>map[key]</code> 不是使用 <code>Map</code> 的正确方式</strong></p>
-<p>虽然 <code>map[key]</code> 也有效，例如我们可以设置 <code>map[key] = 2</code>，这样会将 <code>map</code> 视为 JavaScript 的 plain object，因此它暗含了所有相应的限制（没有对象键等）。</p>
-<p>所以我们应该使用 <code>map</code> 方法：<code>set</code> 和 <code>get</code> 等。</p>
-<hr>
-<p>如我们所见，与对象不同，键不会被转换成字符串。键可以是任何数据类型。</p>
-<p>甚至是对象（引用值）</p>
-<p>例如：</p>
-<pre><code class="javascript">let john = &#123; name: &quot;John&quot; &#125;;
-
-// 存储每个用户的来访次数
-let visitsCountMap = new Map();
-
-// john 是 Map 中的键
-visitsCountMap.set(john, 123);
-
-alert( visitsCountMap.get(john) ); // 123
-
-//对比普通的Object来看↓↓
-visitsCountObj[john] = 123; // 尝试将 john 对象作为键
-
-// 是写成了这样!
-alert( visitsCountObj[&quot;[object Object]&quot;] ); // 123
-</code></pre>
-<p>Map是怎么做到不管什么类型的键都可以认得出来呢？</p>
-<p><code>Map</code> 使用 <code>SameValueZero</code> 算法来比较键是否相等。它和严格等于 <code>===</code> 差不多，**但区别是 <code>NaN</code> 被看成是等于 <code>NaN</code>**。所以 <code>NaN</code> 也可以被用作键。这个算法不能被改变或者自定义。</p>
-<hr>
-<p>每一次<code>Map.set()</code>返回回来的都是Map本身，所以可以直接链式调用</p>
-<p>比如：</p>
-<pre><code class="javascript">map.set(&#39;1&#39;, &#39;str1&#39;)
-  .set(1, &#39;num1&#39;)
-  .set(true, &#39;bool1&#39;);
-</code></pre>
-<h3 id="Map-迭代"><a href="#Map-迭代" class="headerlink" title="Map 迭代"></a>Map 迭代</h3><p>如果要在 <code>map</code> 里使用循环，可以使用以下三个方法：</p>
-<ul>
-<li><code>map.keys()</code> —— 遍历并返回所有的键（returns an iterable for keys）——&gt;for(接收器 of Map.keys)</li>
-<li><code>map.values()</code> —— 遍历并返回所有的值（returns an iterable for values），——&gt;for(接收器 of Map.values)</li>
-<li><code>map.entries()</code> —— 遍历并返回所有的实体（returns an iterable for entries）<code>[key, value]</code>，<code>for..of</code> 在默认情况下使用的就是这个。</li>
-</ul>
-<p>例如：</p>
-<pre><code class="javascript">let recipeMap = new Map([
-  [&#39;cucumber&#39;, 500],
-  [&#39;tomatoes&#39;, 350],
-  [&#39;onion&#39;,    50]
-]);
-
-// 遍历所有的键（vegetables）
-for (let vegetable of recipeMap.keys()) &#123;
-  alert(vegetable); // cucumber, tomatoes, onion
-&#125;
-
-// 遍历所有的值（amounts）
-for (let amount of recipeMap.values()) &#123;
-  alert(amount); // 500, 350, 50
-&#125;
-
-// 遍历所有的实体 [key, value]
-for (let entry of recipeMap) &#123; // 与 recipeMap.entries() 相同
-  alert(entry); // cucumber,500 (and so on)
-&#125;
-</code></pre>
-<h3 id="对象转Map（Object-entries）"><a href="#对象转Map（Object-entries）" class="headerlink" title="对象转Map（Object.entries）"></a>对象转Map（Object.entries）</h3><p>当创建一个 <code>Map</code> 后，我们可以传入一个带有键值对的数组（或其它可迭代对象）来进行初始化，如下所示：</p>
-<pre><code class="javascript">// 键值对 [key, value] 数组
-let map = new Map([
-  [&#39;1&#39;,  &#39;str1&#39;],
-  [1,    &#39;num1&#39;],
-  [true, &#39;bool1&#39;]
-]);
-
-alert( map.get(&#39;1&#39;) ); // str1
-</code></pre>
-<p>如果我们想从一个已有的普通对象（plain object）来创建一个 <code>Map</code>，那么我们可以使用内建方法 Object.entries(obj)，该返回对象的键/值对数组，该数组格式完全按照 <code>Map</code> 所需的格式。</p>
-<p>所以可以像下面这样从一个对象创建一个 Map：</p>
-<pre><code class="javascript">let obj = &#123;
-  name: &quot;John&quot;,
-  age: 30
-&#125;;
-
-let map = new Map(Object.entries(obj));
-
-alert( map.get(&#39;name&#39;) ); // John
-</code></pre>
-<p>这里，<code>Object.entries</code> 返回键/值对数组：<code>[ [&quot;name&quot;,&quot;John&quot;], [&quot;age&quot;, 30] ]</code>。这就是 <code>Map</code> 所需要的格式。</p>
-<h3 id="Map转对象（Object-fromEntries）"><a href="#Map转对象（Object-fromEntries）" class="headerlink" title="Map转对象（Object.fromEntries）"></a>Map转对象（Object.fromEntries）</h3><p>我们刚刚已经学习了如何使用 <code>Object.entries(obj)</code> 从普通对象（plain object）创建 <code>Map</code>。</p>
-<p><code>Object.fromEntries</code> 方法的作用是相反的：给定一个具有 <code>[key, value]</code> 键值对的数组，它会根据给定数组创建一个对象：</p>
-<pre><code class="javascript">let prices = Object.fromEntries([
-  [&#39;banana&#39;, 1],
-  [&#39;orange&#39;, 2],
-  [&#39;meat&#39;, 4]
-]);
-
-// 现在 prices = &#123; banana: 1, orange: 2, meat: 4 &#125;
-
-alert(prices.orange); // 2
-</code></pre>
-<p>我们可以使用 <code>Object.fromEntries</code> 从 <code>Map</code> 得到一个普通对象（plain object）。</p>
-<p>例如，我们在 <code>Map</code> 中存储了一些数据，但是我们需要把这些数据传给需要普通对象（plain object）的第三方代码。</p>
-<p>我们来开始：</p>
-<pre><code class="javascript">let map = new Map();
-map.set(&#39;banana&#39;, 1);
-map.set(&#39;orange&#39;, 2);
-map.set(&#39;meat&#39;, 4);
-
-let obj = Object.fromEntries(map.entries()); // 创建一个普通对象（plain object）(*)
-
-// 完成了！
-// obj = &#123; banana: 1, orange: 2, meat: 4 &#125;
-
-alert(obj.orange); // 2
-</code></pre>
-<p>调用 <code>map.entries()</code> 将返回一个可迭代的键/值对，这刚好是 <code>Object.fromEntries</code> 所需要的格式。</p>
-<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p><code>Set</code> 是一个特殊的类型集合 —— “值的集合”（没有键），它的每一个值只能出现一次。</p>
-<p>它的主要方法如下：</p>
-<ul>
-<li><code>new Set(iterable)</code> —— 创建一个 <code>set</code>，如果提供了一个 <code>iterable</code> 对象（通常是数组），将会从数组里面复制值到 <code>set</code> 中。</li>
-<li><code>set.add(value)</code> —— 添加一个值，返回 set 本身</li>
-<li><code>set.delete(value)</code> —— 删除值，如果 <code>value</code> 在这个方法调用的时候存在则返回 <code>true</code> ，否则返回 <code>false</code>。</li>
-<li><code>set.has(value)</code> —— 如果 <code>value</code> 在 set 中，返回 <code>true</code>，否则返回 <code>false</code>。</li>
-<li><code>set.clear()</code> —— 清空 set。</li>
-<li><code>set.size</code> —— 返回元素个数。</li>
-</ul>
-<p>它的主要特点是，重复使用同一个值调用 <code>set.add(value)</code> 并不会发生什么改变。这就是 <code>Set</code> 里面的每一个值只出现一次的原因。</p>
-<p>例如，我们有客人来访，我们想记住他们每一个人。但是已经来访过的客人再次来访，不应造成重复记录。每个访客必须只被“计数”一次。</p>
-<p><code>Set</code> 可以帮助我们解决这个问题：</p>
-<pre><code class="javascript">let set = new Set();
-
-let john = &#123; name: &quot;John&quot; &#125;;
-let pete = &#123; name: &quot;Pete&quot; &#125;;
-let mary = &#123; name: &quot;Mary&quot; &#125;;
-
-// visits，一些访客来访好几次
-set.add(john);
-set.add(pete);
-set.add(mary);
-set.add(john);
-set.add(mary);
-
-// set 只保留不重复的值
-alert( set.size ); // 3
-
-for (let user of set) &#123;
-  alert(user.name); // John（然后 Pete 和 Mary）
-&#125;
-</code></pre>
-<p><code>Set</code> 的替代方法可以是一个用户数组，用 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh/docs/Web/JavaScript/Reference/Global_Objects/Array/find">arr.find</a> 在每次插入值时检查是否重复。但是这样性能会很差，因为这个方法会遍历整个数组来检查每个元素。<code>Set</code> 内部对唯一性检查进行了更好的优化。</p>
-<h3 id="Set-迭代（iteration）"><a href="#Set-迭代（iteration）" class="headerlink" title="Set 迭代（iteration）"></a>Set 迭代（iteration）</h3><p>我们可以使用 <code>for..of</code> 或 <code>forEach</code> 来遍历 Set：</p>
-<pre><code class="javascript">let set = new Set([&quot;oranges&quot;, &quot;apples&quot;, &quot;bananas&quot;]);
-
-for (let value of set) alert(value);
-
-// 与 forEach 相同：
-set.forEach((value, valueAgain, set) =&gt; &#123;
-  alert(value);
-&#125;);
-</code></pre>
-<p>注意一件有趣的事儿。<code>forEach</code> 的回调函数有三个参数：一个 <code>value</code>，然后是 <strong>同一个值</strong> <code>valueAgain</code>，最后是目标对象。没错，同一个值在参数里出现了两次。</p>
-<p><code>forEach</code> 的回调函数有三个参数，是为了与 <code>Map</code> 兼容。当然，这看起来确实有些奇怪。但是这对在特定情况下轻松地用 <code>Set</code> 代替 <code>Map</code> 很有帮助，反之亦然。</p>
-<p><code>Map</code> 中用于迭代的方法在 <code>Set</code> 中也同样支持：</p>
-<ul>
-<li><code>set.keys()</code> —— 遍历并返回所有的值（returns an iterable object for values），</li>
-<li><code>set.values()</code> —— 与 <code>set.keys()</code> 作用相同，这是为了兼容 <code>Map</code>，</li>
-<li><code>set.entries()</code> —— 遍历并返回所有的实体（returns an iterable object for entries）<code>[value, value]</code>，它的存在也是为了兼容 <code>Map</code>。</li>
-</ul>
-<h3 id="Set和数组互换"><a href="#Set和数组互换" class="headerlink" title="Set和数组互换"></a>Set和数组互换</h3><h4 id="1、array-–-gt-set-（数组转set）"><a href="#1、array-–-gt-set-（数组转set）" class="headerlink" title="1、array –&gt; set （数组转set）"></a>1、array –&gt; set （数组转set）</h4><pre><code class="js">let array = [1, 2, 3, 4];
-let set = new Set(array);
-</code></pre>
-<h4 id="2、set-–-gt-array"><a href="#2、set-–-gt-array" class="headerlink" title="2、set –&gt; array"></a>2、set –&gt; array</h4><pre><code class="js">let demo = new Set([1,2,3,4]);
-Array.from(demo)
-</code></pre>
-</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/09/28/MapandSet/" title="MapandSet">https://zzzjx0912.github.io/2020/09/28/MapandSet/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/09/30/defineProperty/" rel="prev" title="Obect.defineProperty"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">Obect.defineProperty</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/09/28/RegExp/" rel="next" title="正则表达式"><span class="post-nav-text">正则表达式</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v6.1.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.11</span></div><div class="live-time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2020-07-12T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div><div id="busuanzi"><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
-  const date = new Date();
-  const today = (date.getMonth() + 1) + "-" + date.getDate()
-  const mourn_days = ["4-4","9-18"]
-  if (mourn_days.includes(today)) {
-    document.documentElement.style.filter = "grayscale(1)";
-  }
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
 }
-initMourn();</script></div></body></html>
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 0.5rem 5rem 1rem 5rem;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+mobile()
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}

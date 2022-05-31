@@ -1,231 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 6.1.0"><meta name="theme" content="hexo-theme-yun"><title>小白谈闭包 | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".markdown-body img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" type="image/png" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    window.Yun = {}
-    window.CONFIG = {"hostname":"zzzjx0912.github.io","root":"/","title":"ZJX的小破站","version":"1.8.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":null},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
-  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><script>(function(){
-  var bp = document.createElement('script');
-  var curProtocol = window.location.protocol.split(':')[0];
-  if (curProtocol === 'https') {
-    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else {
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(bp, s);
-})();</script><meta name="description" content="小白谈闭包先了解一个知识点就是作用域 [[scope]] [[scope]]里面存的是Js预编译（函数执行前一刻为函数执行准备好的环境）的执行期上下文的集合，比如var ，let，const创建的变量啊，或者新建的function之类的，把该定义的定义，该声明的声明，该提升的提升，注意定义和声明的顺序。 函数每次执行，所产生的执行期上下文都是独一无二的 在函数执行前一刻就准备好了这个作用域，当函数">
-<meta property="og:type" content="article">
-<meta property="og:title" content="小白谈闭包">
-<meta property="og:url" content="https://zzzjx0912.github.io/2020/06/28/closure/index.html">
-<meta property="og:site_name" content="ZJX&#39;s Blog">
-<meta property="og:description" content="小白谈闭包先了解一个知识点就是作用域 [[scope]] [[scope]]里面存的是Js预编译（函数执行前一刻为函数执行准备好的环境）的执行期上下文的集合，比如var ，let，const创建的变量啊，或者新建的function之类的，把该定义的定义，该声明的声明，该提升的提升，注意定义和声明的顺序。 函数每次执行，所产生的执行期上下文都是独一无二的 在函数执行前一刻就准备好了这个作用域，当函数">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/question.png">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/duizhan.image">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/pieceZoom.image">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/3.image">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/4.image">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/new-old.image">
-<meta property="og:image" content="https://zzzjx0912.github.io/2020/06/28/closure/new-old2.image">
-<meta property="article:published_time" content="2020-06-27T18:09:55.000Z">
-<meta property="article:modified_time" content="2021-08-27T07:10:20.000Z">
-<meta property="article:author" content="ZJX">
-<meta property="article:tag" content="JavaScript">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zzzjx0912.github.io/2020/06/28/closure/question.png"><script>(function() {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const setting = localStorage.getItem('darken-mode') || 'auto'
-  if (setting === 'dark' || (prefersDark && setting !== 'light'))
-    document.documentElement.classList.toggle('dark', true)
-})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><span class="site-name">ZJX's Blog</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">31</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%8F%E7%99%BD%E8%B0%88%E9%97%AD%E5%8C%85"><span class="toc-number">1.</span> <span class="toc-text">小白谈闭包</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.1.</span> <span class="toc-text">新的理解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GarbageCollection"><span class="toc-number">1.2.</span> <span class="toc-text">GarbageCollection</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E4%BA%A7%E7%94%9F-amp-%E4%B8%BA%E4%BD%95%E5%9B%9E%E6%94%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">垃圾产生&amp;为何回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.2.</span> <span class="toc-text">垃圾回收策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">标记清除算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%AE%97%E6%B3%95"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">引用计数算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#V8%E5%AF%B9GC%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-number">1.2.3.</span> <span class="toc-text">V8对GC的优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E4%BB%A3%E5%BC%8F%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">分代式垃圾回收</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B0%E8%80%81%E7%94%9F%E4%BB%A3"><span class="toc-number">1.2.3.1.1.</span> <span class="toc-text">新老生代</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">1.2.3.1.1.1.</span> <span class="toc-text">新生代垃圾回收</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%80%81%E7%94%9F%E4%BB%A3%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">1.2.3.1.1.2.</span> <span class="toc-text">老生代垃圾回收</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%88%86%E4%BB%A3%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.2.3.1.2.</span> <span class="toc-text">为什么需要分代式？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">1.2.4.</span> <span class="toc-text">最后</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2020/06/28/closure/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">小白谈闭包</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-06-28 02:09:55" itemprop="dateCreated datePublished" datetime="2020-06-28T02:09:55+08:00">2020-06-28</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2021-08-27 15:10:20" itemprop="dateModified" datetime="2021-08-27T15:10:20+08:00">2021-08-27</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/JavaScript/" style="--text-color:#F4DF4F"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">JavaScript</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="小白谈闭包"><a href="#小白谈闭包" class="headerlink" title="小白谈闭包"></a>小白谈闭包</h1><p>先了解一个知识点就是作用域 <code>[[scope]]</code></p>
-<p><code>[[scope]]</code>里面存的是Js预编译（<em>函数执行前一刻为函数执行准备好的环境</em>）的执行期上下文的集合，比如<code>var</code> ，<code>let</code>，<code>const</code>创建的变量啊，或者新建的function之类的，把该定义的定义，该声明的声明，该提升的提升，<strong>注意定义和声明的顺序</strong>。</p>
-<p><strong>函数每次执行，所产生的执行期上下文都是独一无二的</strong></p>
-<p>在函数执行前一刻就准备好了这个作用域，当函数执行的时候，该函数指向其作用域，当函数执行完之后，就断开跟作用域的链接，当作用域没有函数指向它的时候，就会清空丢弃。（作用域没人要就会自暴自弃……）</p>
-<p>闭包简单来说就是一个函数能引用另一个函数作用域里的东西（本来我家的东西只有我能用，现在我能用别人家的东西就是闭包）</p>
-<p>目前我遇到的有几种变形的闭包情况：</p>
-<ul>
-<li><strong>当一个函数执行完之后，本地作用域外部仍然可以改变（使用）函数内的参数</strong>（经典）</li>
-<li>一个函数的作用域得到了继承</li>
-</ul>
-<pre><code class="javascript">function add()&#123;      //   add.[[scope]]——&gt;1.AO(add) 2.GO
-    var y = 0;     
-    function b()&#123;    //  b.[[scope]]——&gt;1.AO(b) 2.AO(add) 3.GO
-        console.log(++y);
-    &#125;
-    return b     //对外输出内部函数（外面就能使用里面的作用域了）形成了闭包
-&#125;
-
-var num = add();    //此时的num.[[scope]]——&gt;1.AO(b)2.AO(add)3.GO 
-num();  //1   
-num();  // 2        //AO继承，实现累加
-var num2 = add();   //此时的num2.[[scope]]——&gt;1.AO(b)2.AO(add)3.GO 
-num2();  //1
-num(); // 3
-num3 = num;
-num3(); // 4
-</code></pre>
-<p>上面这段代码，原本function b在<code>console.log(++y)</code>之后就执行完毕，与AO（b）断开连接，作用域就清空了，等待下一次函数的执行</p>
-<p>但是函数add <code>return b</code>，那么add就继承了b的作用域，原本清空的y值得到的继承（y儿子拥有了个后爹，不用饿死了）</p>
-<p>这就完成了条件，b函数执行完之后，他的作用域得到了继承。</p>
-<hr>
-<p>课程设计答辩的时候遇到这么一个问题，跟老师关于是否有闭包的问题争辩不一</p>
-<img src="/2020/06/28/closure/question.png" class="" title="question" loading="lazy">
-
-<p>这个应该是个典型的闭包，for循环每循环一次，或者说i的值每改变一次都会使立即执行函数（匿名函数）执行<strong>完毕</strong>一次，也就是断开了多次匿名函数的作用域，但是里面的回调函数（鼠标事件）在执行的时候，仍然可以使用匿名函数某一次循环中作用域中的i，这就形成了闭包</p>
-<h2 id="新的理解"><a href="#新的理解" class="headerlink" title="新的理解"></a>新的理解</h2><p>函数执行会形成一个<strong>私有上下文</strong>，如果上下文中的某些内容（一般指的是堆内存地址）被上下文以外的些事物（例如：变量、事件绑定）所占用，则当前上下文不能被出栈释放（浏览器的垃圾回收机制GC所决定的）</p>
-<p>闭包的机制：形成一个不被释放的上下文；</p>
-<p>闭包的保护：保护私有上下文中的私有变量和外界互不影响，上下文不被释放，那么上下文中的私有变量和值都会保存起来，可以供其下级上下文使用 </p>
-<p>闭包的弊端：如果大量使用闭包，会导致栈内存太大，页面渲染变慢，性能受到影响，所以真是项目中想要合理应用闭包；某些代码会导致栈溢出或者内存泄露，这些操作都是需要我们注意的.</p>
-<h2 id="GarbageCollection"><a href="#GarbageCollection" class="headerlink" title="GarbageCollection"></a>GarbageCollection</h2><p>引用于：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6981588276356317214">「硬核JS」你真的了解垃圾回收机制吗</a></p>
-<p>程序工作过程中会产生很多 <strong>垃圾</strong>，这些垃圾是程序不用的内存或者是之前用过了，以后不会再用的内存空间，而 <code>GC</code> 就是负责回收垃圾的，因为他工作在引擎内部，所以对于我们前端来说，<code>GC</code> 过程是相对比较无感的，这一套引擎执行而对我们又相对无感的操作也就是常说的<strong>垃圾回收机制</strong>了</p>
-<p>当然也不是所有语言都有 <code>GC</code>，一般的高级语言里面会自带 <code>GC</code>，比如 <code>Java、Python、JavaScript</code> 等，也有无 <code>GC</code> 的语言，比如 <code>C、C++</code> 等，那这种就需要我们程序员手动管理内存了，相对比较麻烦</p>
-<h3 id="垃圾产生-amp-为何回收"><a href="#垃圾产生-amp-为何回收" class="headerlink" title="垃圾产生&amp;为何回收"></a>垃圾产生&amp;为何回收</h3><p>我们知道写代码时创建一个基本类型、对象、函数……都是需要占用内存的，但是我们并不关注这些，因为这是引擎为我们分配的，我们不需要显式手动的去分配内存</p>
-<p>但是，你有没有想过，当我们不再需要某个东西时会发生什么？JavaScript 引擎又是如何发现并清理它的呢？</p>
-<p>我们举个简单的例子</p>
-<pre><code class="js">let test = &#123;
-  name: &quot;isboyjc&quot;
-&#125;;
-test = [1,2,3,4,5]
-</code></pre>
-<p>如上所示，我们假设它是一个完整的程序代码</p>
-<p>我们知道 <code>JavaScript</code> 的<strong>引用数据类型</strong>是保存在<strong>堆</strong>内存中的，然后在<strong>栈内存</strong>中保存一个<strong>对堆内存中实际对象的引用</strong>，所以，<code>JavaScript</code> 中对引用数据类型的操作都是操作对象的引用而不是实际的对象。可以简单理解为，栈内存中保存了一个地址，这个地址和堆内存中的实际值是相关的</p>
-<p>那上面代码首先我们声明了一个变量 <code>test</code>，它引用了对象 <code>&#123;name: &#39;isboyjc&#39;&#125;</code>，接着我们把这个变量重新赋值了一个数组对象，也就变成了该变量引用了一个数组，那么之前的对象引用关系就没有了，如下图</p>
-<img src="/2020/06/28/closure/duizhan.image" class="" title="duizhan" loading="lazy">
-
-<p>没有了引用关系，也就是无用的对象，这个时候假如任由它搁置，一个两个还好，多了的话内存也会受不了，所以就需要被清理（回收）</p>
-<p>用官方一点的话说，程序的运行需要内存，只要程序提出要求，操作系统或者运行时就必须提供内存，那么对于持续运行的服务进程，必须要及时释放内存，否则，内存占用越来越高，轻则影响系统性能，重则就会导致进程崩溃</p>
-<h3 id="垃圾回收策略"><a href="#垃圾回收策略" class="headerlink" title="垃圾回收策略"></a>垃圾回收策略</h3><p>在 JavaScript 内存管理中有一个概念叫做<em><strong>可达性</strong></em>，就是那些以某种方式可访问或者说可用的值，它们被保证存储在内存中，反之不可访问则需回收</p>
-<p>至于如何回收，其实就是怎样发现这些不可达的对象（垃圾）它并给予清理的问题， <code>JavaScript</code> 垃圾回收机制的原理说白了也就是定期找出那些不再用到的内存（变量），然后释放其内存</p>
-<p>你可能还会好奇为什么不是实时的找出无用内存并释放呢？其实很简单，实时开销太大了</p>
-<p>我们都可以 Get 到这之中的重点，那就是怎样找出所谓的垃圾？</p>
-<p>这个流程就涉及到了一些算法策略，有很多种方式，我们简单介绍两个最常见的</p>
-<ul>
-<li>标记清除算法</li>
-<li>引用计数算法</li>
-</ul>
-<h4 id="标记清除算法"><a href="#标记清除算法" class="headerlink" title="标记清除算法"></a>标记清除算法</h4><p><strong>策略</strong></p>
-<p>标记清除（Mark-Sweep），目前在 <strong>JavaScript引擎</strong>里这种算法是最常用的，到目前为止的大多数浏览器的<strong>JavaScript引擎</strong>都在采用<em><strong>标记清除算法</strong></em>，只是各大浏览器厂商还对此算法进行了优化加工，且不同浏览器的<strong>JavaScript引擎</strong> 在运行垃圾回收的频率上有所差异</p>
-<p>就像它的名字一样，此算法分为 <strong>标记</strong> 和 <strong>清除</strong> 两个阶段，标记阶段即为所有活动对象做上标记，清除阶段则把没有标记（也就是非活动对象）销毁</p>
-<p>你可能会疑惑怎么给变量加标记？其实有很多种办法，比如当变量进入执行环境时，反转某一位（通过一个二进制字符来表示标记），又或者可以维护进入环境变量和离开环境变量这样两个列表，可以自由的把变量从一个列表转移到另一个列表，当前还有很多其他办法。其实，怎样标记对我们来说并不重要，重要的是其策略</p>
-<p>引擎在执行 GC（使用标记清除算法）时，需要从出发点去遍历内存中所有的对象去打标记，而这个出发点有很多，我们称之为一组 <code>根</code> 对象，而所谓的根对象，其实在浏览器环境中<strong>包括又不止于 <code>全局Window对象</code>、<code>文档DOM树</code> 等</strong></p>
-<p>整个标记清除算法大致过程就像下面这样</p>
-<ul>
-<li>垃圾收集器在运行时会给内存中的所有变量都加上一个标记，假设内存中所有对象都是垃圾，全标记为0</li>
-<li>然后从各个根对象开始遍历，把不是垃圾的节点改成1</li>
-<li>清理所有标记为0的垃圾，销毁并回收它们所占用的内存空间</li>
-<li>最后，把所有内存中对象标记修改为0，等待下一轮垃圾回收</li>
-</ul>
-<p><strong>优点</strong></p>
-<p>标记清除算法的优点只有一个，那就是实现比较简单，打标记也无非打与不打两种情况，这使得一位二进制位（0和1）就可以为其标记，非常简单</p>
-<p><strong>缺点</strong></p>
-<p>标记清除算法有一个很大的缺点，就是在清除之后，剩余的对象内存位置是不变的，也会导致空闲内存空间是不连续的，出现了 <code>内存碎片</code>（如下图），并且由于剩余空闲内存不是一整块，它是由不同大小内存组成的内存列表，这就牵扯出了内存分配的问题</p>
-<img src="/2020/06/28/closure/pieceZoom.image" class="" title="pieceZoom" loading="lazy">
-
-<p>假设我们新建对象分配内存时需要大小为 <code>size</code>，由于空闲内存是间断的、不连续的，则需要对空闲内存列表进行一次单向遍历找出大于等于 <code>size</code> 的块才能为其分配（如下图）</p>
-<img src="/2020/06/28/closure/3.image" class="" width="3" loading="lazy">
-
-<p>那如何找到合适的块呢？我们可以采取下面三种分配策略</p>
-<ul>
-<li><code>First-fit</code>，找到大于等于 <code>size</code> 的块立即返回</li>
-<li><code>Best-fit</code>，遍历整个空闲列表，返回大于等于 <code>size</code> 的最小分块</li>
-<li><code>Worst-fit</code>，遍历整个空闲列表，找到最大的分块，然后切成两部分，一部分 <code>size</code> 大小，并将该部分返回</li>
-</ul>
-<p>这三种策略里面 <code>Worst-fit</code> 的空间利用率看起来是最合理，但实际上切分之后会造成更多的小块，形成内存碎片，所以不推荐使用，对于 <code>First-fit</code> 和 <code>Best-fit</code> 来说，考虑到分配的速度和效率 <code>First-fit</code> 是更为明智的选择</p>
-<p>综上所述，标记清除算法或者说策略就有两个很明显的缺点</p>
-<ul>
-<li><strong>内存碎片化</strong>，空闲内存块是不连续的，容易出现很多空闲内存块，还可能会出现分配所需内存过大的对象时找不到合适的块</li>
-<li><strong>分配速度慢</strong>，因为即便是使用 <code>First-fit</code> 策略，其操作仍是一个 <code>O(n)</code> 的操作，最坏情况是每次都要遍历到最后，同时因为碎片化，大对象的分配效率会更慢</li>
-</ul>
-<p><strong>PS：标记清除算法的缺点补充</strong></p>
-<p>归根结底，标记清除算法的缺点在于清除之后剩余的对象位置不变而导致的空闲内存不连续，所以只要解决这一点，两个缺点都可以完美解决了</p>
-<p>而 <strong>标记整理（Mark-Compact）算法</strong> 就可以有效地解决，它的标记阶段和标记清除算法没有什么不同，只是标记结束后，标记整理算法会将活着的对象（即不需要清理的对象）向内存的一端移动，最后清理掉边界的内存（如下图）</p>
-<img src="/2020/06/28/closure/4.image" class="" width="4" loading="lazy">
-
-<h4 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h4><p><strong>策略</strong></p>
-<p>引用计数（Reference Counting），这其实是早先的一种垃圾回收算法，它把 <code>对象是否不再需要</code> 简化定义为 <code>对象有没有其他对象引用到它</code>，如果没有引用指向该对象（零引用），对象将被垃圾回收机制回收，目前很少使用这种算法了，因为它的问题很多，不过我们还是需要了解一下</p>
-<p>它的策略是跟踪记录每个变量值被使用的次数</p>
-<ul>
-<li>当声明了一个变量并且将一个引用类型赋值给该变量的时候这个值的引用次数就为 1</li>
-<li>如果同一个值又被赋给另一个变量，那么引用数加 1</li>
-<li>如果该变量的值被其他的值覆盖了，则引用次数减 1</li>
-<li>当这个值的引用次数变为 0 的时候，说明没有变量在使用，这个值没法被访问了，回收空间，垃圾回收器会在运行的时候清理掉引用次数为 0 的值占用的内存</li>
-</ul>
-<p>如下例</p>
-<pre><code class="js">let a = new Object()     // 此对象的引用计数为 1（a引用）
-let b = a         // 此对象的引用计数是 2（a,b引用）
-a = null          // 此对象的引用计数为 1（b引用）
-b = null          // 此对象的引用计数为 0（无引用）
-...            // GC 回收此对象
-复制代码
-</code></pre>
-<p>这种方式是不是很简单？确实很简单，不过在引用计数这种算法出现没多久，就遇到了一个很严重的问题——循环引用，即对象 A 有一个指针指向对象 B，而对象 B 也引用了对象 A ，如下面这个例子</p>
-<pre><code class="js">function test()&#123;
-  let A = new Object()
-  let B = new Object()
-  
-  A.b = B
-  B.a = A
-&#125;
-复制代码
-</code></pre>
-<p>如上所示，对象 A 和 B 通过各自的属性相互引用着，按照上文的引用计数策略，它们的引用数量都是 2，但是，在函数 <code>test</code> 执行完成之后，对象 A 和 B 是要被清理的，但使用引用计数则不会被清理，因为它们的引用数量不会变成 0，假如此函数在程序中被多次调用，那么就会造成大量的内存不会被释放</p>
-<p>我们再用标记清除的角度看一下，当函数结束后，两个对象都不在作用域中，A 和 B 都会被当作非活动对象来清除掉，相比之下，引用计数则不会释放，也就会造成大量无用内存占用，这也是后来放弃引用计数，使用标记清除的原因之一</p>
-<p><strong>优点</strong></p>
-<p>引用计数算法的优点我们对比标记清除来看就会清晰很多，首先引用计数在引用值为 0 时，也就是在变成垃圾的那一刻就会被回收，所以它可以立即回收垃圾</p>
-<p>而标记清除算法需要每隔一段时间进行一次，那在应用程序（JS脚本）运行过程中线程就必须要暂停去执行一段时间的 <code>GC</code>，另外，标记清除算法需要遍历堆里的活动以及非活动对象来清除，而引用计数则只需要在引用时计数就可以了</p>
-<p><strong>缺点</strong></p>
-<p>引用计数的缺点想必大家也都很明朗了，首先它需要一个计数器，而此计数器需要占很大的位置，因为我们也不知道被引用数量的上限，还有就是无法解决循环引用无法回收的问题，这也是最严重的</p>
-<h3 id="V8对GC的优化"><a href="#V8对GC的优化" class="headerlink" title="V8对GC的优化"></a>V8对GC的优化</h3><p>我们在上面也说过，现在大多数浏览器都是基于标记清除算法，V8 亦是，当然 V8 肯定也对其进行了一些优化加工处理，那接下来我们主要就来看 V8 中对垃圾回收机制的优化</p>
-<h4 id="分代式垃圾回收"><a href="#分代式垃圾回收" class="headerlink" title="分代式垃圾回收"></a>分代式垃圾回收</h4><p>试想一下，我们上面所说的垃圾清理算法在每次垃圾回收时都要检查内存中所有的对象，这样的话对于一些大、老、存活时间长的对象来说同新、小、存活时间短的对象一个频率的检查很不好，因为前者需要时间长并且不需要频繁进行清理，后者恰好相反，怎么优化这点呢？？？分代式就来了</p>
-<h5 id="新老生代"><a href="#新老生代" class="headerlink" title="新老生代"></a>新老生代</h5><p>V8 的垃圾回收策略主要基于分代式垃圾回收机制，V8 中将堆内存分为新生代和老生代两区域，采用不同的垃圾回收器也就是不同的策略管理垃圾回收</p>
-<p>新生代的对象为存活时间较短的对象，简单来说就是新产生的对象，通常只支持 <code>1～8M</code> 的容量，而老生代的对象为存活事件较长或常驻内存的对象，简单来说就是经历过新生代垃圾回收后还存活下来的对象，容量通常比较大</p>
-<p>V8 整个堆内存的大小就等于新生代加上老生代的内存（如下图）</p>
-<img src="/2020/06/28/closure/new-old.image" class="" title="new-old" loading="lazy">
-
-<p>对于新老两块内存区域的垃圾回收，V8 采用了两个垃圾回收器来管控，我们暂且将管理新生代的垃圾回收器叫做新生代垃圾回收器，同样的，我们称管理老生代的垃圾回收器叫做老生代垃圾回收器好了</p>
-<h6 id="新生代垃圾回收"><a href="#新生代垃圾回收" class="headerlink" title="新生代垃圾回收"></a>新生代垃圾回收</h6><p>新生代对象是通过一个名为 <code>Scavenge</code> 的算法进行垃圾回收，在 <code>Scavenge算法</code> 的具体实现中，主要采用了一种复制式的方法即 <code>Cheney算法</code> ，我们细细道来</p>
-<p><code>Cheney算法</code> 中将堆内存一分为二，一个是处于使用状态的空间我们暂且称之为 <code>使用区</code>，一个是处于闲置状态的空间我们称之为 <code>空闲区</code>，如下图所示</p>
-<img src="/2020/06/28/closure/new-old2.image" class="" title="new-old2" loading="lazy">
-
-<p>新加入的对象都会存放到使用区，当使用区快被写满时，就需要执行一次垃圾清理操作</p>
-<p>当开始进行垃圾回收时，新生代垃圾回收器会对使用区中的活动对象做标记，标记完成之后将使用区的活动对象复制进空闲区并进行排序，随后进入垃圾清理阶段，即将非活动对象占用的空间清理掉。最后进行角色互换，把原来的使用区变成空闲区，把原来的空闲区变成使用区</p>
-<p>当一个对象经过多次复制后依然存活，它将会被认为是生命周期较长的对象，随后会被移动到老生代中，采用老生代的垃圾回收策略进行管理</p>
-<p>另外还有一种情况，如果复制一个对象到空闲区时，空闲区空间占用超过了 25%，那么这个对象会被直接晋升到老生代空间中，设置为 25% 的比例的原因是，当完成 <code>Scavenge</code> 回收后，空闲区将翻转成使用区，继续进行对象内存的分配，若占比过大，将会影响后续内存分配</p>
-<h6 id="老生代垃圾回收"><a href="#老生代垃圾回收" class="headerlink" title="老生代垃圾回收"></a>老生代垃圾回收</h6><p>相比于新生代，老生代的垃圾回收就比较容易理解了，上面我们说过，对于大多数占用空间大、存活时间长的对象会被分配到老生代里，因为老生代中的对象通常比较大，如果再如新生代一般分区然后复制来复制去就会非常耗时，从而导致回收执行效率不高，所以老生代垃圾回收器来管理其垃圾回收执行，它的整个流程就采用的就是上文所说的标记清除算法了</p>
-<p>首先是标记阶段，从一组根元素开始，递归遍历这组根元素，遍历过程中能到达的元素称为活动对象，没有到达的元素就可以判断为非活动对象</p>
-<p>清除阶段老生代垃圾回收器会直接将非活动对象，也就是数据清理掉</p>
-<p>前面我们也提过，标记清除算法在清除后会产生大量不连续的内存碎片，过多的碎片会导致大对象无法分配到足够的连续内存，而 V8 中就采用了我们上文中说的标记整理算法来解决这一问题来优化空间</p>
-<h5 id="为什么需要分代式？"><a href="#为什么需要分代式？" class="headerlink" title="为什么需要分代式？"></a>为什么需要分代式？</h5><p>正如小标题，为什么需要分代式？这个机制有什么优点又解决了什么问题呢？</p>
-<p>其实，它并不能说是解决了什么问题，可以说是一个优化点吧</p>
-<p>分代式机制把一些新、小、存活时间短的对象作为新生代，采用一小块内存频率较高的快速清理，而一些大、老、存活时间长的对象作为老生代，使其很少接受检查，新老生代的回收机制及频率是不同的，可以说此机制的出现很大程度提高了垃圾回收机制的效率</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>那上面就是 V8 引擎为我们的垃圾回收所做的一些主要优化了，虽然引擎有优化，但并不是说我们就可以完全不用关心垃圾回收这块了，我们的代码中依然要主动避免一些不利于引擎做垃圾回收操作，因为不是所有无用对象内存都可以被回收的，那当不再用到的内存，没有及时回收时，我们叫它 <code>内存泄漏</code></p>
-</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2020/06/28/closure/" title="小白谈闭包">https://zzzjx0912.github.io/2020/06/28/closure/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/06/29/let-const/" rel="prev" title=""><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text"></span></a></div><div class="post-nav-item"></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v6.1.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.11</span></div><div class="live-time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2020-07-12T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div><div id="busuanzi"><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
-  const date = new Date();
-  const today = (date.getMonth() + 1) + "-" + date.getDate()
-  const mourn_days = ["4-4","9-18"]
-  if (mourn_days.includes(today)) {
-    document.documentElement.style.filter = "grayscale(1)";
-  }
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
 }
-initMourn();</script></div></body></html>
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 0.5rem 5rem 1rem 5rem;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+mobile()
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}

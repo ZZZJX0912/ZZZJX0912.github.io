@@ -1,463 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="ZJX"><meta name="copyright" content="ZJX"><meta name="generator" content="Hexo 6.1.0"><meta name="theme" content="hexo-theme-yun"><title>Docker | ZJX's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".markdown-body img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" type="image/png" href="/Z.ico"><link rel="mask-icon" href="/Z.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    window.Yun = {}
-    window.CONFIG = {"hostname":"zzzjx0912.github.io","root":"/","title":"ZJX的小破站","version":"1.8.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":null},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
-  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><script>(function(){
-  var bp = document.createElement('script');
-  var curProtocol = window.location.protocol.split(':')[0];
-  if (curProtocol === 'https') {
-    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-  }
-  else {
-    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-  }
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(bp, s);
-})();</script><meta name="description" content="Docker 引用参考于：Docker 入门教程  一、Docker为什么出现1、环境配置的难题软件开发最大的麻烦事之一，就是环境配置。用户计算机的环境都不相同，你怎么知道自家的软件，能在那些机器跑起来？ 用户必须保证两件事：操作系统的设置，各种库和组件的安装。只有它们都正确，软件才能运行。举例来说，安装一个 Python 应用，计算机必须有 Python 引擎，还必须有各种依赖，可能还要配置环境">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Docker">
-<meta property="og:url" content="https://zzzjx0912.github.io/2021/09/18/Docker/index.html">
-<meta property="og:site_name" content="ZJX&#39;s Blog">
-<meta property="og:description" content="Docker 引用参考于：Docker 入门教程  一、Docker为什么出现1、环境配置的难题软件开发最大的麻烦事之一，就是环境配置。用户计算机的环境都不相同，你怎么知道自家的软件，能在那些机器跑起来？ 用户必须保证两件事：操作系统的设置，各种库和组件的安装。只有它们都正确，软件才能运行。举例来说，安装一个 Python 应用，计算机必须有 Python 引擎，还必须有各种依赖，可能还要配置环境">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-09-18T07:30:37.000Z">
-<meta property="article:modified_time" content="2021-09-18T07:32:46.000Z">
-<meta property="article:author" content="ZJX">
-<meta property="article:tag" content="运维">
-<meta name="twitter:card" content="summary"><script>(function() {
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const setting = localStorage.getItem('darken-mode') || 'auto'
-  if (setting === 'dark' || (prefersDark && setting !== 'light'))
-    document.documentElement.classList.toggle('dark', true)
-})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="ZJX"><img width="96" loading="lazy" src="/../tx.jpg" alt="ZJX"></a><div class="site-author-name"><a href="/about/">ZJX</a></div><span class="site-name">ZJX's Blog</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">31</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/ZZZJX0912" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=112766323" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/13639006" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="13662206756@163.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker"><span class="toc-number">1.</span> <span class="toc-text">Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Docker%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BA%E7%8E%B0"><span class="toc-number">1.1.</span> <span class="toc-text">一、Docker为什么出现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E7%9A%84%E9%9A%BE%E9%A2%98"><span class="toc-number">1.1.1.</span> <span class="toc-text">1、环境配置的难题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">1.1 虚拟机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-Linux%E5%AE%B9%E5%99%A8"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">1.2 Linux容器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-Docker"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">1.3 Docker</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Docker%E7%94%A8%E9%80%94"><span class="toc-number">1.2.</span> <span class="toc-text">二、Docker用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%95%9C%E5%83%8F%EF%BC%88image%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">三、镜像（image）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%91%BD%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">四、命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%B9%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">1.容器生命周期管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-run"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">1.1 run</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-start-stop-restart"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">1.2 start&#x2F;stop&#x2F;restart</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-kill"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">1.3 kill</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-rm"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">1.5 rm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-6-pause-unpause"><span class="toc-number">1.4.1.5.</span> <span class="toc-text">1.6 pause&#x2F;unpause</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-7-create"><span class="toc-number">1.4.1.6.</span> <span class="toc-text">1.7 create</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-8-exec"><span class="toc-number">1.4.1.7.</span> <span class="toc-text">1.8 exec</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AE%B9%E5%99%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.2.</span> <span class="toc-text">2.容器操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-ps-%E5%88%97%E5%87%BA%E5%AE%B9%E5%99%A8"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">2.1 ps  列出容器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-inspect-%E8%8E%B7%E5%8F%96%E5%AE%B9%E5%99%A8-%E9%95%9C%E5%83%8F%E7%9A%84%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">2.2 inspect  获取容器&#x2F;镜像的元数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-top-%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8C%E7%9A%84%E8%BF%9B%E7%A8%8B%E4%BF%A1%E6%81%AF%EF%BC%8C%E6%94%AF%E6%8C%81-ps-%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.2.3.</span> <span class="toc-text">2.3 top  查看容器中运行的进程信息，支持 ps 命令参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-attach-%E8%BF%9E%E6%8E%A5%E5%88%B0%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="toc-number">1.4.2.4.</span> <span class="toc-text">2.4 attach  连接到正在运行中的容器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-events-%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%8E%B7%E5%8F%96%E5%AE%9E%E6%97%B6%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.4.2.5.</span> <span class="toc-text">2.5 events  从服务器获取实时事件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-logs-%E8%8E%B7%E5%8F%96%E5%AE%B9%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97"><span class="toc-number">1.4.2.6.</span> <span class="toc-text">2.6 logs  获取容器的日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-7-wait-%E9%98%BB%E5%A1%9E%E8%BF%90%E8%A1%8C%E7%9B%B4%E5%88%B0%E5%AE%B9%E5%99%A8%E5%81%9C%E6%AD%A2%EF%BC%8C%E7%84%B6%E5%90%8E%E6%89%93%E5%8D%B0%E5%87%BA%E5%AE%83%E7%9A%84%E9%80%80%E5%87%BA%E4%BB%A3%E7%A0%81"><span class="toc-number">1.4.2.7.</span> <span class="toc-text">2.7 wait  阻塞运行直到容器停止，然后打印出它的退出代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-8-export-%E5%B0%86%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%BD%9C%E4%B8%BA%E4%B8%80%E4%B8%AAtar%E5%BD%92%E6%A1%A3%E6%96%87%E4%BB%B6%E5%AF%BC%E5%87%BA%E5%88%B0STDOUT"><span class="toc-number">1.4.2.8.</span> <span class="toc-text">2.8 export  将文件系统作为一个tar归档文件导出到STDOUT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-9-port-%E5%88%97%E5%87%BA%E6%8C%87%E5%AE%9A%E7%9A%84%E5%AE%B9%E5%99%A8%E7%9A%84%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%EF%BC%8C%E6%88%96%E8%80%85%E6%9F%A5%E6%89%BE%E5%B0%86PRIVATE-PORT-NAT%E5%88%B0%E9%9D%A2%E5%90%91%E5%85%AC%E4%BC%97%E7%9A%84%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.4.2.9.</span> <span class="toc-text">2.9 port  列出指定的容器的端口映射，或者查找将PRIVATE_PORT NAT到面向公众的端口</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%B9%E5%99%A8rootfs%E5%91%BD%E4%BB%A4"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.容器rootfs命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-commit-%E4%BB%8E%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">3.1 commit  从容器创建一个新的镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-cp-%E7%94%A8%E4%BA%8E%E5%AE%B9%E5%99%A8%E4%B8%8E%E4%B8%BB%E6%9C%BA%E4%B9%8B%E9%97%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8B%B7%E8%B4%9D"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">3.2 cp  用于容器与主机之间的数据拷贝</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-diff-%E6%A3%80%E6%9F%A5%E5%AE%B9%E5%99%A8%E9%87%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%9A%84%E6%9B%B4%E6%94%B9"><span class="toc-number">1.4.3.3.</span> <span class="toc-text">3.3 diff  检查容器里文件结构的更改</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.镜像仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-login-%E7%99%BB%E9%99%86%E5%88%B0%E4%B8%80%E4%B8%AADocker%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">4.1 login  登陆到一个Docker镜像仓库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-pull-%E4%BB%8E%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93%E4%B8%AD%E6%8B%89%E5%8F%96%E6%88%96%E8%80%85%E6%9B%B4%E6%96%B0%E6%8C%87%E5%AE%9A%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">4.2 pull  从镜像仓库中拉取或者更新指定镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-push-%E5%B0%86%E6%9C%AC%E5%9C%B0%E7%9A%84%E9%95%9C%E5%83%8F%E4%B8%8A%E4%BC%A0%E5%88%B0%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93-%E8%A6%81%E5%85%88%E7%99%BB%E9%99%86%E5%88%B0%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="toc-number">1.4.4.3.</span> <span class="toc-text">4.3 push  将本地的镜像上传到镜像仓库,要先登陆到镜像仓库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-4-search-%E4%BB%8EDocker-Hub%E6%9F%A5%E6%89%BE%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.4.4.</span> <span class="toc-text">4.4 search 从Docker Hub查找镜像</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86"><span class="toc-number">1.4.5.</span> <span class="toc-text">5.镜像管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-images-%E5%88%97%E5%87%BA%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">5.1 images  列出本地镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-rmi-%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E5%B0%91%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.5.2.</span> <span class="toc-text">5.2 rmi  删除本地一个或多少镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-tag-%E6%A0%87%E8%AE%B0%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F%EF%BC%8C%E5%B0%86%E5%85%B6%E5%BD%92%E5%85%A5%E6%9F%90%E4%B8%80%E4%BB%93%E5%BA%93"><span class="toc-number">1.4.5.3.</span> <span class="toc-text">5.3 tag  标记本地镜像，将其归入某一仓库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-build-%E5%91%BD%E4%BB%A4%E7%94%A8%E4%BA%8E%E4%BD%BF%E7%94%A8-Dockerfile-%E5%88%9B%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.5.4.</span> <span class="toc-text">5.4 build  命令用于使用 Dockerfile 创建镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-5-history-%E7%9C%8B%E6%8C%87%E5%AE%9A%E9%95%9C%E5%83%8F%E7%9A%84%E5%88%9B%E5%BB%BA%E5%8E%86%E5%8F%B2"><span class="toc-number">1.4.5.5.</span> <span class="toc-text">5.5 history  看指定镜像的创建历史</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-6-save-%E5%B0%86%E6%8C%87%E5%AE%9A%E9%95%9C%E5%83%8F%E4%BF%9D%E5%AD%98%E6%88%90-tar-%E5%BD%92%E6%A1%A3%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.5.6.</span> <span class="toc-text">5.6 save  将指定镜像保存成 tar 归档文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-7-import-%E4%BB%8E%E5%BD%92%E6%A1%A3%E6%96%87%E4%BB%B6%E4%B8%AD%E5%88%9B%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.5.7.</span> <span class="toc-text">5.7 import  从归档文件中创建镜像</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-info-version"><span class="toc-number">1.4.6.</span> <span class="toc-text">6.info|version</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-info-%E6%98%BE%E7%A4%BA-Docker-%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%EF%BC%8C%E5%8C%85%E6%8B%AC%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8%E6%95%B0"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">6.1 info  显示 Docker 系统信息，包括镜像和容器数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-version-%E6%98%BE%E7%A4%BA-Docker-%E7%89%88%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.6.2.</span> <span class="toc-text">6.2 version 显示 Docker 版本信息</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://zzzjx0912.github.io/2021/09/18/Docker/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="ZJX"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="ZJX's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Docker</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2021-09-18 15:30:37" itemprop="dateCreated datePublished" datetime="2021-09-18T15:30:37+08:00">2021-09-18</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/%E8%BF%90%E7%BB%B4/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">运维</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><blockquote>
-<p>引用参考于：<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2018/02/docker-tutorial.html">Docker 入门教程</a></p>
-</blockquote>
-<h2 id="一、Docker为什么出现"><a href="#一、Docker为什么出现" class="headerlink" title="一、Docker为什么出现"></a>一、Docker为什么出现</h2><h3 id="1、环境配置的难题"><a href="#1、环境配置的难题" class="headerlink" title="1、环境配置的难题"></a>1、环境配置的难题</h3><p>软件开发最大的麻烦事之一，就是环境配置。用户计算机的环境都不相同，你怎么知道自家的软件，能在那些机器跑起来？</p>
-<p>用户必须保证两件事：<strong>操作系统的设置</strong>，<strong>各种库和组件的安装</strong>。只有它们都正确，软件才能运行。举例来说，安装一个 Python 应用，计算机必须有 Python 引擎，还必须有<strong>各种依赖</strong>，可能还要<strong>配置环境变量</strong>。</p>
-<p>如果某些老旧的模块与当前环境不兼容，那就麻烦了。开发者常常会说：”<strong>它在我的机器可以跑了”（It works on my machine）</strong>，言下之意就是，其他机器很可能跑不了。</p>
-<p>环境配置如此麻烦，换一台机器，就要重来一次，旷日费时。很多人想到，能不能从根本上解决问题，软件可以带环境安装？也就是说，安装的时候，把原始环境一模一样地复制过来。</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><h4 id="1-1-虚拟机"><a href="#1-1-虚拟机" class="headerlink" title="1.1 虚拟机"></a>1.1 虚拟机</h4><p>虚拟机（virtual machine）就是带环境安装的一种解决方案。它可以在一种操作系统里面运行另一种操作系统，比如在 Windows 系统里面运行 Linux 系统。应用程序对此毫无感知，因为虚拟机看上去跟真实系统一模一样，而对于底层系统来说，虚拟机就是一个普通文件，不需要了就删掉，对其他部分毫无影响。</p>
-<p>虽然用户可以通过虚拟机还原软件的原始环境。但是，这个方案有几个缺点。</p>
-<p><strong>1）资源占用多</strong></p>
-<p>虚拟机会独占一部分内存和硬盘空间。它运行的时候，其他程序就不能使用这些资源了。哪怕虚拟机里面的应用程序，真正使用的内存只有 1MB，虚拟机依然需要几百 MB 的内存才能运行。</p>
-<p><strong>2）冗余步骤多</strong></p>
-<p>虚拟机是完整的操作系统，一些系统级别的操作步骤，往往无法跳过，比如用户登录。</p>
-<p><strong>3）启动慢</strong></p>
-<p>启动操作系统需要多久，启动虚拟机就需要多久。可能要等几分钟，应用程序才能真正运行。  </p>
-<h4 id="1-2-Linux容器"><a href="#1-2-Linux容器" class="headerlink" title="1.2 Linux容器"></a>1.2 Linux容器</h4><p>由于虚拟机存在这些缺点，Linux 发展出了另一种虚拟化技术：Linux 容器（Linux Containers，缩写为 LXC）。</p>
-<p><strong>Linux 容器不是模拟一个完整的操作系统，而是对进程进行隔离。</strong>或者说，在正常进程的外面套了一个<a target="_blank" rel="noopener" href="https://opensource.com/article/18/1/history-low-level-container-runtimes">保护层</a>。对于容器里面的进程来说，它接触到的各种资源都是虚拟的，从而实现与底层系统的隔离。</p>
-<p>由于容器是进程级别的，相比虚拟机有很多优势。</p>
-<p><strong>1）启动快</strong></p>
-<p>容器里面的应用，直接就是底层系统的一个进程，而不是虚拟机内部的进程。所以，启动容器相当于启动本机的一个进程，而不是启动一个操作系统，速度就快很多。</p>
-<p><strong>2）资源占用少</strong></p>
-<p>容器只占用需要的资源，不占用那些没有用到的资源；虚拟机由于是完整的操作系统，不可避免要占用所有资源。另外，<strong>多个容器可以共享资源，虚拟机都是独享资源。</strong></p>
-<p><strong>3）体积小</strong></p>
-<p>容器只要包含用到的组件即可，而虚拟机是整个操作系统的打包，所以容器文件比虚拟机文件要小很多。</p>
-<p>总之，容器有点像轻量级的虚拟机，能够提供虚拟化的环境，但是成本开销小得多。</p>
-<h4 id="1-3-Docker"><a href="#1-3-Docker" class="headerlink" title="1.3 Docker"></a>1.3 Docker</h4><p><strong>Docker 属于 Linux 容器的一种封装，提供简单易用的容器使用接口。</strong>它是目前最流行的 Linux 容器解决方案。</p>
-<p>所以Window系统使用Docker需要安装<strong>WSL(Windows Subsystem for Linux)适用于Linux的Windows子系统</strong></p>
-<p>Docker 将应用程序与该程序的依赖，打包在一个文件里面。运行这个文件，就会生成一个虚拟容器。程序在这个虚拟容器里运行，就好像在真实的物理机上运行一样。有了 Docker，就不用担心环境问题。</p>
-<p>总体来说，Docker 的接口相当简单，用户可以方便地创建和使用容器，把自己的应用放入容器。容器还可以进行版本管理、复制、分享、修改，就像管理普通的代码一样。</p>
-<h2 id="二、Docker用途"><a href="#二、Docker用途" class="headerlink" title="二、Docker用途"></a>二、Docker用途</h2><p>Docker 的主要用途，目前有三大类。</p>
-<p><strong>（1）提供一次性的环境。</strong>比如，本地测试他人的软件、持续集成的时候提供单元测试和构建的环境。</p>
-<p><strong>（2）提供弹性的云服务。</strong>因为 Docker 容器可以随开随关，很适合动态扩容和缩容。</p>
-<p><strong>（3）组建微服务架构。</strong>通过多个容器，一台机器可以跑多个服务，因此在本机就可以模拟出微服务架构。</p>
-<h2 id="三、镜像（image）"><a href="#三、镜像（image）" class="headerlink" title="三、镜像（image）"></a>三、镜像（image）</h2><p><strong>Docker 把应用程序及其依赖，打包在 image 文件里面。</strong>只有通过这个文件，才能生成 Docker 容器。</p>
-<p><strong>image 文件可以看作是容器的模板</strong>。<strong>Docker 根据 image 文件生成容器的实例。</strong>（类比于构造函数和实例）</p>
-<p>同一个 image 文件，可以生成多个同时运行的容器实例。</p>
-<p>image 是二进制文件。实际开发中，一个 image 文件往往通过继承另一个 image 文件，加上一些个性化设置而生成。举例来说，你可以在 Ubuntu 的 image 基础上，往里面加入 Apache 服务器，形成你的 image。</p>
-<p>image 文件是通用的，一台机器的 image 文件拷贝到另一台机器，照样可以使用。一般来说，为了节省时间，我们应该尽量使用别人制作好的 image 文件，而不是自己制作。即使要定制，也应该基于别人的 image 文件进行加工，而不是从零开始制作。</p>
-<p>为了方便共享，image 文件制作完成后，可以上传到网上的仓库。Docker 的官方仓库 <a target="_blank" rel="noopener" href="https://hub.docker.com/">Docker Hub</a> 是最重要、最常用的 image 仓库。此外，出售自己制作的 image 文件也是可以的。</p>
-<h2 id="四、命令"><a href="#四、命令" class="headerlink" title="四、命令"></a>四、命令</h2><h3 id="1-容器生命周期管理"><a href="#1-容器生命周期管理" class="headerlink" title="1.容器生命周期管理"></a>1.容器生命周期管理</h3><h4 id="1-1-run"><a href="#1-1-run" class="headerlink" title="1.1 run"></a>1.1 run</h4><p><strong>语法</strong></p>
-<p>docker run [OPTIONS] IMAGE [COMMAND] [ARG…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-a stdin: 指定标准输入输出内容类型，可选 STDIN/STDOUT/STDERR 三项；
--d: 后台运行容器，并返回容器ID；
--i: 以交互模式运行容器，通常与 -t 同时使用；
--p: 端口映射，格式为：主机(宿主)端口:容器端口  
--t: 为容器重新分配一个伪输入终端，通常与 -i 同时使用；
---name=&quot;nginx-lb&quot;: 为容器指定一个名称；
---dns 8.8.8.8: 指定容器使用的DNS服务器，默认和宿主一致；
---dns-search example.com: 指定容器DNS搜索域名，默认和宿主一致；
--h &quot;mars&quot;: 指定容器的hostname；
--e username=&quot;ritchie&quot;: 设置环境变量；
---env-file=[]: 从指定文件读入环境变量；
---cpuset=&quot;0-2&quot; or --cpuset=&quot;0,1,2&quot;: 绑定容器到指定CPU运行；
--m :设置容器使用内存最大值；
---net=&quot;bridge&quot;: 指定容器的网络连接类型，支持 bridge/host/none/container: 四种类型；
---link=[]: 添加链接到另一个容器；
---expose=[]: 开放一个端口或一组端口
-</code></pre>
-<p><strong>实例</strong></p>
-<p>使用docker镜像nginx:latest以后台模式启动一个容器,并将容器命名为mynginx。</p>
-<pre><code>docker run --name mynginx -d nginx:latest
-</code></pre>
-<p>使用镜像nginx:latest以后台模式启动一个容器,并将容器的80端口映射到主机随机端口。</p>
-<pre><code>docker run -P -d nginx:latest
-</code></pre>
-<p>使用镜像 nginx:latest，以后台模式启动一个容器,将容器的 80 端口映射到主机的 80 端口,主机的目录 /data 映射到容器的 /data。</p>
-<pre><code>docker run -p 80:80 -v /data:/data -d nginx:latest
-绑定容器的 8080 端口，并将其映射到本地主机 127.0.0.1 的 80 端口上。
-</code></pre>
-<pre><code>docker run -p 127.0.0.1:80:8080/tcp ubuntu bash
-使用镜像nginx:latest以交互模式启动一个容器,在容器内执行/bin/bash命令。
-</code></pre>
-<pre><code>runoob@runoob:~$ docker run -it nginx:latest /bin/bash
-root@b8573233d675:/#
-</code></pre>
-<h4 id="1-2-start-stop-restart"><a href="#1-2-start-stop-restart" class="headerlink" title="1.2 start/stop/restart"></a>1.2 start/stop/restart</h4><p>docker start :启动一个或多少已经被停止的容器</p>
-<p>docker stop :停止一个运行中的容器</p>
-<p>docker restart :重启容器</p>
-<p><strong>语法</strong></p>
-<p>docker start [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p>docker stop [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p>docker restart [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p><strong>实例</strong></p>
-<p>启动已被停止的容器myrunoob</p>
-<pre><code>docker start myrunoob
-</code></pre>
-<p>停止运行中的容器myrunoob</p>
-<pre><code>docker stop myrunoob
-</code></pre>
-<p>重启容器myrunoob</p>
-<pre><code>docker restart myrunoob
-</code></pre>
-<h4 id="1-3-kill"><a href="#1-3-kill" class="headerlink" title="1.3 kill"></a>1.3 kill</h4><p><strong>语法</strong></p>
-<p>docker kill [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-s :向容器发送一个信号
-</code></pre>
-<p><strong>实例</strong></p>
-<p>杀掉运行中的容器mynginx</p>
-<pre><code>runoob@runoob:~$ docker kill -s KILL mynginxmynginx
-</code></pre>
-<h4 id="1-5-rm"><a href="#1-5-rm" class="headerlink" title="1.5 rm"></a>1.5 rm</h4><p><strong>语法</strong></p>
-<p>docker rm [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-f :通过SIGKILL信号强制删除一个运行中的容器-l :移除容器间的网络连接，而非容器本身-v :-v 删除与容器关联的卷
-</code></pre>
-<p><strong>实例</strong></p>
-<p>强制删除容器db01、db02</p>
-<pre><code>docker rm -f db01 db02
-</code></pre>
-<p>移除容器nginx01对容器db01的连接，连接名db</p>
-<pre><code>docker rm -l db
-</code></pre>
-<p>删除容器nginx01,并删除容器挂载的数据卷</p>
-<pre><code>docker rm -v nginx01
-</code></pre>
-<h4 id="1-6-pause-unpause"><a href="#1-6-pause-unpause" class="headerlink" title="1.6 pause/unpause"></a>1.6 pause/unpause</h4><p>docker pause :暂停容器中所有的进程。</p>
-<p>docker unpause :恢复容器中所有的进程。</p>
-<p><strong>语法</strong></p>
-<p>docker pause [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p>docker unpause [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p><strong>实例</strong></p>
-<p>暂停数据库容器db01提供服务。</p>
-<pre><code>docker pause db01
-</code></pre>
-<p>恢复数据库容器db01提供服务。</p>
-<pre><code>docker unpause db01
-</code></pre>
-<h4 id="1-7-create"><a href="#1-7-create" class="headerlink" title="1.7 create"></a>1.7 create</h4><p><strong>语法</strong></p>
-<p>docker create [OPTIONS] IMAGE [COMMAND] [ARG…]</p>
-<p>语法同 docker run</p>
-<p><strong>实例</strong></p>
-<p>使用docker镜像nginx:latest创建一个容器,并将容器命名为myrunoob</p>
-<pre><code>runoob@runoob:~$ docker create  --name myrunoob  nginx:latest      09b93464c2f75b7b69f83d56a9cfc23ceb50a48a9db7652ee4c27e3e2cb1961f
-</code></pre>
-<h4 id="1-8-exec"><a href="#1-8-exec" class="headerlink" title="1.8 exec"></a>1.8 exec</h4><p><strong>语法</strong></p>
-<p>docker exec [OPTIONS] CONTAINER COMMAND [ARG…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-d :分离模式: 在后台运行-i :即使没有附加也保持STDIN 打开-t :分配一个伪终端
-</code></pre>
-<p><strong>实例</strong></p>
-<p>在容器mynginx中以交互模式执行容器内/root/runoob.sh脚本</p>
-<pre><code>runoob@runoob:~$ docker exec -it mynginx /bin/sh /root/runoob.sh
-</code></pre>
-<p><a target="_blank" rel="noopener" href="http://www.runoob.com/">http://www.runoob.com/</a></p>
-<p>在容器mynginx中开启一个交互模式的终端</p>
-<pre><code>runoob@runoob:~$ docker exec -i -t  mynginx /bin/bashroot@b1a0703e41e7:/#
-</code></pre>
-<h3 id="2-容器操作"><a href="#2-容器操作" class="headerlink" title="2.容器操作"></a>2.容器操作</h3><h4 id="2-1-ps-列出容器"><a href="#2-1-ps-列出容器" class="headerlink" title="2.1 ps  列出容器"></a>2.1 ps  列出容器</h4><p><strong>语法</strong></p>
-<p>docker ps [OPTIONS]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-a :显示所有的容器，包括未运行的。-f :根据条件过滤显示的内容。--format :指定返回值的模板文件。-l :显示最近创建的容器。-n :列出最近创建的n个容器。--no-trunc :不截断输出。-q :静默模式，只显示容器编号。-s :显示总的文件大小。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>列出所有在运行的容器信息。</p>
-<pre><code>runoob@runoob:~$ docker psCONTAINER ID   IMAGE          COMMAND                ...  PORTS                    NAMES09b93464c2f7   nginx:latest   &quot;nginx -g &#39;daemon off&quot; ...  80/tcp, 443/tcp          myrunoob96f7f14e99ab   mysql:5.6      &quot;docker-entrypoint.sh&quot; ...  0.0.0.0:3306-&gt;3306/tcp   mymysql
-</code></pre>
-<p>列出最近创建的5个容器信息。</p>
-<pre><code>runoob@runoob:~$ docker ps -n 5CONTAINER ID        IMAGE               COMMAND                   CREATED            09b93464c2f7        nginx:latest        &quot;nginx -g &#39;daemon off&quot;    2 days ago   ...      b8573233d675        nginx:latest        &quot;/bin/bash&quot;               2 days ago   ...      b1a0703e41e7        nginx:latest        &quot;nginx -g &#39;daemon off&quot;    2 days ago   ...    f46fb1dec520        5c6e1090e771        &quot;/bin/sh -c &#39;set -x \t&quot;   2 days ago   ...    a63b4a5597de        860c279d2fec        &quot;bash&quot;                    2 days ago   ...
-</code></pre>
-<p>列出所有创建的容器ID。</p>
-<pre><code>runoob@runoob:~$ docker ps -a -q09b93464c2f7b8573233d675b1a0703e41e7f46fb1dec520a63b4a5597de6a4aa42e947bde7bb36e796843a432b73776664a8ab1a585ba52eb632bbd...
-</code></pre>
-<h4 id="2-2-inspect-获取容器-镜像的元数据"><a href="#2-2-inspect-获取容器-镜像的元数据" class="headerlink" title="2.2 inspect  获取容器/镜像的元数据"></a>2.2 inspect  获取容器/镜像的元数据</h4><p><strong>语法</strong></p>
-<p>docker inspect [OPTIONS] NAME|ID [NAME|ID…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-f :指定返回值的模板文件。-s :显示总的文件大小。--type :为指定类型返回JSON。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>获取镜像mysql:5.6的元信息。</p>
-<pre><code>runoob@runoob:~$ docker inspect mysql:5.6[    &#123;        &quot;Id&quot;: &quot;sha256:2c0964exxxxxxxxxxxxxxxxxxxxxxxxxxx235f070ec&quot;,        &quot;RepoTags&quot;: [            &quot;mysql:5.6&quot;        ],        &quot;RepoDigests&quot;: [],        &quot;Parent&quot;: &quot;&quot;,        &quot;Comment&quot;: &quot;&quot;,        &quot;Created&quot;: &quot;2016-05-24T04:01:41.168371815Z&quot;,        &quot;Container&quot;: &quot;e0924bc460ff97787f34610115e9363e6363b30b8efa406e28eb495ab199ca54&quot;,        &quot;ContainerConfig&quot;: &#123;            &quot;Hostname&quot;: &quot;b0cf605c7757&quot;,            &quot;Domainname&quot;: &quot;&quot;,            &quot;User&quot;: &quot;&quot;,            &quot;AttachStdin&quot;: false,            &quot;AttachStdout&quot;: false,            &quot;AttachStderr&quot;: false,            &quot;ExposedPorts&quot;: &#123;                &quot;3306/tcp&quot;: &#123;&#125;            &#125;,...
-</code></pre>
-<p>获取正在运行的容器mymysql的 IP。  </p>
-<pre><code>runoob@runoob:~$ docker inspect --format=&#39;&#123;&#123;range .NetworkSettings.Networks&#125;&#125;&#123;&#123;.IPAddress&#125;&#125;&#123;&#123;end&#125;&#125;&#39; mymysql172.17.0.3
-</code></pre>
-<h4 id="2-3-top-查看容器中运行的进程信息，支持-ps-命令参数"><a href="#2-3-top-查看容器中运行的进程信息，支持-ps-命令参数" class="headerlink" title="2.3 top  查看容器中运行的进程信息，支持 ps 命令参数"></a>2.3 top  查看容器中运行的进程信息，支持 ps 命令参数</h4><p><strong>语法</strong></p>
-<p>docker top [OPTIONS] CONTAINER [ps OPTIONS]</p>
-<p>容器运行时不一定有/bin/bash终端来交互执行top命令，而且容器还不一定有top命令，可以使用docker top来实现查看container中正在运行的进程。</p>
-<p><strong>实例</strong></p>
-<p>查看容器mymysql的进程信息。</p>
-<pre><code>runoob@runoob:~/mysql$ docker top mymysqlUID    PID    PPID    C      STIME   TTY  TIME       CMD999    40347  40331   18     00:58   ?    00:00:02   mysqld
-</code></pre>
-<p>查看所有运行容器的进程信息。</p>
-<pre><code>for i in  `docker ps |grep Up|awk &#39;&#123;print $1&#125;&#39;`;do echo \ &amp;&amp;docker top $i; done
-</code></pre>
-<h4 id="2-4-attach-连接到正在运行中的容器"><a href="#2-4-attach-连接到正在运行中的容器" class="headerlink" title="2.4 attach  连接到正在运行中的容器"></a>2.4 attach  连接到正在运行中的容器</h4><p><strong>语法</strong></p>
-<p>docker attach [OPTIONS] CONTAINER</p>
-<p>要attach上去的容器必须正在运行，可以同时连接上同一个container来共享屏幕（与screen命令的attach类似）。</p>
-<p>官方文档中说attach后可以通过CTRL-C来detach，但实际上经过我的测试，如果container当前在运行bash，CTRL-C自然是当前行的输入，没有退出；如果container当前正在前台运行进程，如输出nginx的access.log日志，CTRL-C不仅会导致退出容器，而且还stop了。这不是我们想要的，detach的意思按理应该是脱离容器终端，但容器依然运行。好在attach是可以带上–sig-proxy=false来确保CTRL-D或CTRL-C不会关闭容器。</p>
-<p><strong>实例</strong></p>
-<p>容器mynginx将访问日志指到标准输出，连接到容器查看访问信息。</p>
-<pre><code>runoob@runoob:~$ docker attach --sig-proxy=false mynginx192.168.239.1 - - [10/Jul/2016:16:54:26 +0000] &quot;GET / HTTP/1.1&quot; 304 0 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36&quot; &quot;-&quot;
-</code></pre>
-<h4 id="2-5-events-从服务器获取实时事件"><a href="#2-5-events-从服务器获取实时事件" class="headerlink" title="2.5 events  从服务器获取实时事件"></a>2.5 events  从服务器获取实时事件</h4><p><strong>语法</strong></p>
-<p>docker events [OPTIONS]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-f ：根据条件过滤事件；--since ：从指定的时间戳后显示所有事件;--until ：流水时间显示到指定的时间为止；
-</code></pre>
-<p><strong>实例</strong></p>
-<p>显示docker 2016年7月1日后的所有事件。</p>
-<pre><code>runoob@runoob:~/mysql$ docker events  --since=&quot;1467302400&quot;2016-07-08T19:44:54.501277677+08:00 network connect 6xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxd4 (container=b8573233d675705df8c89796a2c2687cd8e36e03646457a15fb51022db440e64, name=bridge, type=bridge)2016-07-08T19:44:54.723876221+08:00 container start b8573233d675705df8c89796a2c2687cd8e36e03646457a15fb51022db440e64 (image=nginx:latest, name=elegant_albattani)2016-07-08T19:44:54.726110498+08:00 container resize b8573233d675705df8c89796a2c2687cd8e36e03646457a15fb51022db440e64 (height=39, image=nginx:latest, name=elegant_albattani, width=167)2016-07-08T19:46:22.137250899+08:00 container die b8573233d675705df8c89796a2c2687cd8e36e03646457a15fb51022db440e64 (exitCode=0, image=nginx:latest, name=elegant_albattani)...
-</code></pre>
-<p>显示docker 镜像为mysql:5.6 2016年7月1日后的相关事件。</p>
-<pre><code>runoob@runoob:~/mysql$ docker events -f &quot;image&quot;=&quot;mysql:5.6&quot; --since=&quot;1467302400&quot;  2016-07-11T00:38:53.975174837+08:00 container start 96f7f14e99ab9d2f60943a50be23035eda1623782cc5f930411bbea407a2bb10 (image=mysql:5.6, name=mymysql)2016-07-11T00:51:17.022572452+08:00 container kill 96f7f14e99ab9d2f60943a50be23035eda1623782cc5f930411bbea407a2bb10 (image=mysql:5.6, name=mymysql, signal=9)2016-07-11T00:51:17.132532080+08:00 container die 96f7f14e99ab9d2f60943a50be23035eda1623782cc5f930411bbea407a2bb10 (exitCode=137, image=mysql:5.6, name=mymysql)2016-07-11T00:51:17.514661357+08:00 container destroy 96f7f14e99ab9d2f60943a50be23035eda1623782cc5f930411bbea407a2bb10 (image=mysql:5.6, name=mymysql)2016-07-11T00:57:18.551984549+08:00 container create c8f0a32f12f5ec061d286af0b1285601a3e33a90a08ff1706de619ac823c345c (image=mysql:5.6, name=mymysql)2016-07-11T00:57:18.557405864+08:00 container attach c8f0a32f12f5ec061d286af0b1285601a3e33a90a08ff1706de619ac823c345c (image=mysql:5.6, name=mymysql)2016-07-11T00:57:18.844134112+08:00 container start c8f0a32f12f5ec061d286af0b1285601a3e33a90a08ff1706de619ac823c345c (image=mysql:5.6, name=mymysql)2016-07-11T00:57:19.140141428+08:00 container die c8f0a32f12f5ec061d286af0b1285601a3e33a90a08ff1706de619ac823c345c (exitCode=1, image=mysql:5.6, name=mymysql)2016-07-11T00:58:05.941019136+08:00 container destroy c8f0a32f12f5ec061d286af0b1285601a3e33a90a08ff1706de619ac823c345c (image=mysql:5.6, name=mymysql)2016-07-11T00:58:07.965128417+08:00 container create a404c6c174a21c52f199cfce476e041074ab020453c7df2a13a7869b48f2f37e (image=mysql:5.6, name=mymysql)2016-07-11T00:58:08.188734598+08:00 container start a404c6c174a21c52f199cfce476e041074ab020453c7df2a13a7869b48f2f37e (image=mysql:5.6, name=mymysql)2016-07-11T00:58:20.010876777+08:00 container top a404c6c174a21c52f199cfce476e041074ab020453c7df2a13a7869b48f2f37e (image=mysql:5.6, name=mymysql)2016-07-11T01:06:01.395365098+08:00 container top a404c6c174a21c52f199cfce476e041074ab020453c7df2a13a7869b48f2f37e (image=mysql:5.6, name=mymysql)
-</code></pre>
-<h4 id="2-6-logs-获取容器的日志"><a href="#2-6-logs-获取容器的日志" class="headerlink" title="2.6 logs  获取容器的日志"></a>2.6 logs  获取容器的日志</h4><p><strong>语法</strong></p>
-<p>docker logs [OPTIONS] CONTAINER</p>
-<p>OPTIONS说明：</p>
-<pre><code>-f : 跟踪日志输出--since :显示某个开始时间的所有日志-t : 显示时间戳--tail :仅列出最新N条容器日志
-</code></pre>
-<p><strong>实例</strong></p>
-<p>跟踪查看容器mynginx的日志输出。</p>
-<pre><code>runoob@runoob:~$ docker logs -f mynginx192.168.239.1 - - [10/Jul/2016:16:53:33 +0000] &quot;GET / HTTP/1.1&quot; 200 612 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36&quot; &quot;-&quot;2016/07/10 16:53:33 [error] 5#5: *1 open() &quot;/usr/share/nginx/html/favicon.ico&quot; failed (2: No such file or directory), client: 192.168.239.1, server: localhost, request: &quot;GET /favicon.ico HTTP/1.1&quot;, host: &quot;192.168.239.130&quot;, referrer: &quot;http://192.168.239.130/&quot;192.168.239.1 - - [10/Jul/2016:16:53:33 +0000] &quot;GET /favicon.ico HTTP/1.1&quot; 404 571 &quot;http://192.168.239.130/&quot; &quot;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36&quot; &quot;-&quot;192.168.239.1 - - [10/Jul/2016:16:53:59 +0000] &quot;GET / HTTP/1.1&quot; 304 0 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36&quot; &quot;-&quot;...
-</code></pre>
-<p>查看容器mynginx从2016年7月1日后的最新10条日志。</p>
-<pre><code>docker logs --since=&quot;2016-07-01&quot; --tail=10 mynginx
-</code></pre>
-<h4 id="2-7-wait-阻塞运行直到容器停止，然后打印出它的退出代码"><a href="#2-7-wait-阻塞运行直到容器停止，然后打印出它的退出代码" class="headerlink" title="2.7 wait  阻塞运行直到容器停止，然后打印出它的退出代码"></a>2.7 wait  阻塞运行直到容器停止，然后打印出它的退出代码</h4><p><strong>语法</strong></p>
-<p>docker wait [OPTIONS] CONTAINER [CONTAINER…]</p>
-<p><strong>实例</strong></p>
-<pre><code>docker wait CONTAINER
-</code></pre>
-<h4 id="2-8-export-将文件系统作为一个tar归档文件导出到STDOUT"><a href="#2-8-export-将文件系统作为一个tar归档文件导出到STDOUT" class="headerlink" title="2.8 export  将文件系统作为一个tar归档文件导出到STDOUT"></a>2.8 export  将文件系统作为一个tar归档文件导出到STDOUT</h4><p><strong>语法</strong></p>
-<p>docker export [OPTIONS] CONTAINER</p>
-<p>OPTIONS说明：</p>
-<pre><code>-o :将输入内容写到文件。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>将id为a404c6c174a2的容器按日期保存为tar文件。</p>
-<pre><code>runoob@runoob:~$ docker export -o mysql-`date +%Y%m%d`.tar a404c6c174a2runoob@runoob:~$ ls mysql-`date +%Y%m%d`.tarmysql-20160711.tar
-</code></pre>
-<h4 id="2-9-port-列出指定的容器的端口映射，或者查找将PRIVATE-PORT-NAT到面向公众的端口"><a href="#2-9-port-列出指定的容器的端口映射，或者查找将PRIVATE-PORT-NAT到面向公众的端口" class="headerlink" title="2.9 port  列出指定的容器的端口映射，或者查找将PRIVATE_PORT NAT到面向公众的端口"></a>2.9 port  列出指定的容器的端口映射，或者查找将PRIVATE_PORT NAT到面向公众的端口</h4><p><strong>语法</strong></p>
-<p>docker port [OPTIONS] CONTAINER [PRIVATE_PORT[/PROTO]]</p>
-<p><strong>实例</strong></p>
-<p>查看容器mynginx的端口映射情况。</p>
-<pre><code>runoob@runoob:~$ docker port mymysql3306/tcp -&gt; 0.0.0.0:3306
-</code></pre>
-<h3 id="3-容器rootfs命令"><a href="#3-容器rootfs命令" class="headerlink" title="3.容器rootfs命令"></a>3.容器rootfs命令</h3><h4 id="3-1-commit-从容器创建一个新的镜像"><a href="#3-1-commit-从容器创建一个新的镜像" class="headerlink" title="3.1 commit  从容器创建一个新的镜像"></a>3.1 commit  从容器创建一个新的镜像</h4><p><strong>语法</strong></p>
-<p>docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-a :提交的镜像作者；-c :使用Dockerfile指令来创建镜像；-m :提交时的说明文字；-p :在commit时，将容器暂停。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>将容器a404c6c174a2 保存为新的镜像,并添加提交人信息和说明信息。</p>
-<pre><code>runoob@runoob:~$ docker commit -a &quot;runoob.com&quot; -m &quot;my apache&quot; a404c6c174a2  mymysql:v1  sha256:37af1236adef1544e8886be23010b66577647a40bc02c0885a6600b33ee28057runoob@runoob:~$ docker images mymysql:v1REPOSITORY          TAG                 IMAGE ID            CREATED             SIZEmymysql             v1                  37af1236adef        15 seconds ago      329 MB
-</code></pre>
-<h4 id="3-2-cp-用于容器与主机之间的数据拷贝"><a href="#3-2-cp-用于容器与主机之间的数据拷贝" class="headerlink" title="3.2 cp  用于容器与主机之间的数据拷贝"></a>3.2 cp  用于容器与主机之间的数据拷贝</h4><p><strong>语法</strong></p>
-<p>docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-</p>
-<p>docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH</p>
-<p>OPTIONS说明：</p>
-<pre><code>-L :保持源目标中的链接
-</code></pre>
-<p><strong>实例</strong></p>
-<p>将主机/www/runoob目录拷贝到容器96f7f14e99ab的/www目录下。</p>
-<pre><code>docker cp /www/runoob 96f7f14e99ab:/www/
-</code></pre>
-<p>将主机/www/runoob目录拷贝到容器96f7f14e99ab中，目录重命名为www。</p>
-<pre><code>docker cp /
-</code></pre>
-<p>www/runoob 96f7f14e99ab:/www</p>
-<p>将容器96f7f14e99ab的/www目录拷贝到主机的/tmp目录中。</p>
-<pre><code>docker cp  96f7f14e99ab:/www /tmp/
-</code></pre>
-<h4 id="3-3-diff-检查容器里文件结构的更改"><a href="#3-3-diff-检查容器里文件结构的更改" class="headerlink" title="3.3 diff  检查容器里文件结构的更改"></a>3.3 diff  检查容器里文件结构的更改</h4><p><strong>语法</strong></p>
-<p>docker diff [OPTIONS] CONTAINER</p>
-<p><strong>实例</strong></p>
-<p>查看容器mymysql的文件结构更改。</p>
-<pre><code>runoob@runoob:~$ docker diff mymysqlA /logsA /mysql_dataC /runC /run/mysqldA /run/mysqld/mysqld.pidA /run/mysqld/mysqld.sockC /tmp
-</code></pre>
-<h3 id="4-镜像仓库"><a href="#4-镜像仓库" class="headerlink" title="4.镜像仓库"></a>4.镜像仓库</h3><h4 id="4-1-login-登陆到一个Docker镜像仓库"><a href="#4-1-login-登陆到一个Docker镜像仓库" class="headerlink" title="4.1 login  登陆到一个Docker镜像仓库"></a>4.1 login  登陆到一个Docker镜像仓库</h4><p>docker login : 登陆到一个Docker镜像仓库，如果未指定镜像仓库地址，默认为官方仓库 Docker Hub</p>
-<p>docker logout : 登出一个Docker镜像仓库，如果未指定镜像仓库地址，默认为官方仓库 Docker Hub</p>
-<p><strong>语法</strong></p>
-<p>docker login [OPTIONS] [SERVER]</p>
-<p>docker logout [OPTIONS] [SERVER]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-u :登陆的用户名-p :登陆的密码
-</code></pre>
-<p><strong>实例</strong></p>
-<p>登陆到Docker Hub</p>
-<pre><code>docker login -u 用户名 -p 密码
-</code></pre>
-<p>登出Docker Hub</p>
-<pre><code>docker logout
-</code></pre>
-<h4 id="4-2-pull-从镜像仓库中拉取或者更新指定镜像"><a href="#4-2-pull-从镜像仓库中拉取或者更新指定镜像" class="headerlink" title="4.2 pull  从镜像仓库中拉取或者更新指定镜像"></a>4.2 pull  从镜像仓库中拉取或者更新指定镜像</h4><p><strong>语法</strong></p>
-<p>docker pull [OPTIONS] NAME[:TAG|@DIGEST]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-a :拉取所有 tagged 镜像--disable-content-trust :忽略镜像的校验,默认开启
-</code></pre>
-<p><strong>实例</strong></p>
-<p>从Docker Hub下载java最新版镜像。</p>
-<pre><code>docker pull java
-</code></pre>
-<p>从Docker Hub下载REPOSITORY为java的所有镜像。</p>
-<pre><code>docker pull -a java
-</code></pre>
-<h4 id="4-3-push-将本地的镜像上传到镜像仓库-要先登陆到镜像仓库"><a href="#4-3-push-将本地的镜像上传到镜像仓库-要先登陆到镜像仓库" class="headerlink" title="4.3 push  将本地的镜像上传到镜像仓库,要先登陆到镜像仓库"></a>4.3 push  将本地的镜像上传到镜像仓库,要先登陆到镜像仓库</h4><p><strong>语法</strong></p>
-<p>docker push [OPTIONS] NAME[:TAG]</p>
-<p>OPTIONS说明：</p>
-<pre><code>--disable-content-trust :忽略镜像的校验,默认开启
-</code></pre>
-<p><strong>实例</strong></p>
-<p>上传本地镜像myapache:v1到镜像仓库中。</p>
-<pre><code>docker push myapache:v1
-</code></pre>
-<h4 id="4-4-search-从Docker-Hub查找镜像"><a href="#4-4-search-从Docker-Hub查找镜像" class="headerlink" title="4.4 search 从Docker Hub查找镜像"></a>4.4 search 从Docker Hub查找镜像</h4><p><strong>语法</strong></p>
-<p>docker search [OPTIONS] TERM</p>
-<p>OPTIONS说明：</p>
-<pre><code>--automated :只列出 automated build类型的镜像；--no-trunc :显示完整的镜像描述；-s :列出收藏数不小于指定值的镜像。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>从Docker Hub查找所有镜像名包含java，并且收藏数大于10的镜像</p>
-<pre><code>runoob@runoob:~$ docker search -s 10 javaNAME                  DESCRIPTION                           STARS   OFFICIAL   AUTOMATEDjava                  Java is a concurrent, class-based...   1037    [OK]        anapsix/alpine-java   Oracle Java 8 (and 7) with GLIBC ...   115                [OK]develar/java                                                 46                 [OK]isuper/java-oracle    This repository contains all java...   38                 [OK]lwieske/java-8        Oracle Java 8 Container - Full + ...   27                 [OK]nimmis/java-centos    This is docker images of CentOS 7...   13                 [OK]
-</code></pre>
-<h3 id="5-镜像管理"><a href="#5-镜像管理" class="headerlink" title="5.镜像管理"></a>5.镜像管理</h3><h4 id="5-1-images-列出本地镜像"><a href="#5-1-images-列出本地镜像" class="headerlink" title="5.1 images  列出本地镜像"></a>5.1 images  列出本地镜像</h4><p><strong>语法</strong></p>
-<p>docker images [OPTIONS] [REPOSITORY[:TAG]]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-a :列出本地所有的镜像（含中间映像层，默认情况下，过滤掉中间映像层）；--digests :显示镜像的摘要信息；-f :显示满足条件的镜像；--format :指定返回值的模板文件；--no-trunc :显示完整的镜像信息；-q :只显示镜像ID。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>查看本地镜像列表。</p>
-<pre><code>runoob@runoob:~$ docker imagesREPOSITORY              TAG                 IMAGE ID            CREATED             SIZEmymysql                 v1                  37af1236adef        5 minutes ago       329 MBrunoob/ubuntu           v4                  1c06aa18edee        2 days ago          142.1 MB&lt;none&gt;                  &lt;none&gt;              5c6e1090e771        2 days ago          165.9 MBhttpd                   latest              ed38aaffef30        11 days ago         195.1 MBalpine                  latest              4e38e38c8ce0        2 weeks ago         4.799 MBmongo                   3.2                 282fd552add6        3 weeks ago         336.1 MBredis                   latest              4465e4bcad80        3 weeks ago         185.7 MBphp                     5.6-fpm             025041cd3aa5        3 weeks ago         456.3 MBpython                  3.5                 045767ddf24a        3 weeks ago         684.1 MB...
-</code></pre>
-<p>列出本地镜像中REPOSITORY为ubuntu的镜像列表。</p>
-<pre><code>root@runoob:~# docker images  ubuntuREPOSITORY          TAG                 IMAGE ID            CREATED             SIZEubuntu              14.04               90d5884b1ee0        9 weeks ago         188 MBubuntu              15.10               4e3b13c8a266        3 months ago        136.3 MB
-</code></pre>
-<h4 id="5-2-rmi-删除本地一个或多少镜像"><a href="#5-2-rmi-删除本地一个或多少镜像" class="headerlink" title="5.2 rmi  删除本地一个或多少镜像"></a>5.2 rmi  删除本地一个或多少镜像</h4><p><strong>语法</strong></p>
-<p>docker rmi [OPTIONS] IMAGE [IMAGE…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-f :强制删除；--no-prune :不移除该镜像的过程镜像，默认移除；
-</code></pre>
-<p><strong>实例</strong></p>
-<p>强制删除本地镜像runoob/ubuntu:v4。</p>
-<pre><code>root@runoob:~# docker rmi -f runoob/ubuntu:v4Untagged: runoob/ubuntu:v4Deleted: sha256:1c06aa18edee44230f93a90a7d88139235de12cd4c089d41eed8419b503072beDeleted: sha256:85feb446e89a28d58ee7d80ea5ce367eebb7cec70f0ec18aa4faa874cbd97c73
-</code></pre>
-<h4 id="5-3-tag-标记本地镜像，将其归入某一仓库"><a href="#5-3-tag-标记本地镜像，将其归入某一仓库" class="headerlink" title="5.3 tag  标记本地镜像，将其归入某一仓库"></a>5.3 tag  标记本地镜像，将其归入某一仓库</h4><p><strong>语法</strong></p>
-<p>docker tag [OPTIONS] IMAGE[:TAG] [REGISTRYHOST/][USERNAME/]NAME[:TAG]</p>
-<p><strong>实例</strong></p>
-<p>将镜像ubuntu:15.10标记为 runoob/ubuntu:v3 镜像。</p>
-<pre><code>root@runoob:~# docker tag ubuntu:15.10 runoob/ubuntu:v3root@runoob:~# docker images   runoob/ubuntu:v3REPOSITORY          TAG                 IMAGE ID            CREATED             SIZErunoob/ubuntu       v3                  4e3b13c8a266        3 months ago        136.3 MB
-</code></pre>
-<h4 id="5-4-build-命令用于使用-Dockerfile-创建镜像"><a href="#5-4-build-命令用于使用-Dockerfile-创建镜像" class="headerlink" title="5.4 build  命令用于使用 Dockerfile 创建镜像"></a>5.4 build  命令用于使用 Dockerfile 创建镜像</h4><p><strong>语法</strong></p>
-<p>docker build [OPTIONS] PATH | URL | -</p>
-<p>OPTIONS说明：</p>
-<pre><code>--build-arg=[] :设置镜像创建时的变量；--cpu-shares :设置 cpu 使用权重；--cpu-period :限制 CPU CFS周期；--cpu-quota :限制 CPU CFS配额；--cpuset-cpus :指定使用的CPU id；--cpuset-mems :指定使用的内存 id；--disable-content-trust :忽略校验，默认开启；-f :指定要使用的Dockerfile路径；--force-rm :设置镜像过程中删除中间容器；--isolation :使用容器隔离技术；--label=[] :设置镜像使用的元数据；-m :设置内存最大值；--memory-swap :设置Swap的最大值为内存+swap，&quot;-1&quot;表示不限swap；--no-cache :创建镜像的过程不使用缓存；--pull :尝试去更新镜像的新版本；--quiet, -q :安静模式，成功后只输出镜像 ID；--rm :设置镜像成功后删除中间容器；--shm-size :设置/dev/shm的大小，默认值是64M；--ulimit :Ulimit配置。--tag, -t: 镜像的名字及标签，通常 name:tag 或者 name 格式；可以在一次构建中为一个镜像设置多个标签。--network: 默认 default。在构建期间设置RUN指令的网络模式
-</code></pre>
-<p><strong>实例</strong></p>
-<p>使用当前目录的 Dockerfile 创建镜像，标签为 runoob/ubuntu:v1。</p>
-<pre><code>docker build -t runoob/ubuntu:v1 .
-</code></pre>
-<p>使用URL github.com/creack/docker-firefox 的 Dockerfile 创建镜像。  </p>
-<pre><code>docker build github.com/creack/docker-firefox
-</code></pre>
-<p>也可以通过 -f Dockerfile 文件的位置：</p>
-<pre><code>$ docker build -f /path/to/a/Dockerfile .
-</code></pre>
-<p>在 Docker 守护进程执行 Dockerfile 中的指令前，首先会对 Dockerfile 进行语法检查，有语法错误时会返回：</p>
-<pre><code>$ docker build -t test/myapp .Sending build context to Docker daemon 2.048 kBError response from daemon: Unknown instruction: RUNCMD
-</code></pre>
-<h4 id="5-5-history-看指定镜像的创建历史"><a href="#5-5-history-看指定镜像的创建历史" class="headerlink" title="5.5 history  看指定镜像的创建历史"></a>5.5 history  看指定镜像的创建历史</h4><p><strong>语法</strong></p>
-<p>docker history [OPTIONS] IMAGE</p>
-<p>OPTIONS说明：</p>
-<pre><code>-H :以可读的格式打印镜像大小和日期，默认为true；--no-trunc :显示完整的提交记录；-q :仅列出提交记录ID。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>查看本地镜像runoob/ubuntu:v3的创建历史。</p>
-<pre><code>root@runoob:~# docker history runoob/ubuntu:v3IMAGE             CREATED           CREATED BY                                      SIZE      COMMENT4e3b13c8a266      3 months ago      /bin/sh -c #(nop) CMD [&quot;/bin/bash&quot;]             0 B                  &lt;missing&gt;         3 months ago      /bin/sh -c sed -i &#39;s/^#\s*\(deb.*universe\)$/   1.863 kB            &lt;missing&gt;         3 months ago      /bin/sh -c set -xe   &amp;&amp; echo &#39;#!/bin/sh&#39; &gt; /u   701 B                &lt;missing&gt;         3 months ago      /bin/sh -c #(nop) ADD file:43cb048516c6b80f22   136.3 MB
-</code></pre>
-<h4 id="5-6-save-将指定镜像保存成-tar-归档文件"><a href="#5-6-save-将指定镜像保存成-tar-归档文件" class="headerlink" title="5.6 save  将指定镜像保存成 tar 归档文件"></a>5.6 save  将指定镜像保存成 tar 归档文件</h4><p><strong>语法</strong></p>
-<p>docker save [OPTIONS] IMAGE [IMAGE…]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-o :输出到的文件。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>将镜像runoob/ubuntu:v3 生成my_ubuntu_v3.tar文档</p>
-<pre><code>runoob@runoob:~$ docker save -o my_ubuntu_v3.tar runoob/ubuntu:v3runoob@runoob:~$ ll my_ubuntu_v3.tar-rw------- 1 runoob runoob 142102016 Jul 11 01:37 my_ubuntu_v3.ta
-</code></pre>
-<h4 id="5-7-import-从归档文件中创建镜像"><a href="#5-7-import-从归档文件中创建镜像" class="headerlink" title="5.7 import  从归档文件中创建镜像"></a>5.7 import  从归档文件中创建镜像</h4><p><strong>语法</strong></p>
-<p>docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-c :应用docker 指令创建镜像；-m :提交时的说明文字；
-</code></pre>
-<p><strong>实例</strong></p>
-<p>从镜像归档文件my_ubuntu_v3.tar创建镜像，命名为runoob/ubuntu:v4</p>
-<pre><code>runoob@runoob:~$ docker import  my_ubuntu_v3.tar runoob/ubuntu:v4  sha256:63cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9runoob@runoob:~$ docker images runoob/ubuntu:v4REPOSITORY          TAG                 IMAGE ID            CREATED             SIZErunoob/ubuntu       v4                  63ce4a6d6bc3        20 seconds ago      142.1 MB
-</code></pre>
-<h3 id="6-info-version"><a href="#6-info-version" class="headerlink" title="6.info|version"></a>6.info|version</h3><h4 id="6-1-info-显示-Docker-系统信息，包括镜像和容器数"><a href="#6-1-info-显示-Docker-系统信息，包括镜像和容器数" class="headerlink" title="6.1 info  显示 Docker 系统信息，包括镜像和容器数"></a>6.1 info  显示 Docker 系统信息，包括镜像和容器数</h4><p><strong>语法</strong></p>
-<p>docker info [OPTIONS]</p>
-<p><strong>实例</strong></p>
-<p>查看docker系统信息。</p>
-<pre><code>$ docker infoContainers: 12Images: 41Storage Driver: aufs Root Dir: /var/lib/docker/aufs Backing Filesystem: extfs Dirs: 66 Dirperm1 Supported: falseExecution Driver: native-0.2Logging Driver: json-fileKernel Version: 3.13.0-32-genericOperating System: Ubuntu 14.04.1 LTSCPUs: 1Total Memory: 1.954 GiBName: iZ23mtq8bs1ZID: M5N4:K6WN:PUNC:73ZN:AONJ:AUHL:KSYH:2JPI:CH3K:O4MK:6OCX:5OYW
-</code></pre>
-<h4 id="6-2-version-显示-Docker-版本信息"><a href="#6-2-version-显示-Docker-版本信息" class="headerlink" title="6.2 version 显示 Docker 版本信息"></a>6.2 version 显示 Docker 版本信息</h4><p><strong>语法</strong></p>
-<p>docker version [OPTIONS]</p>
-<p>OPTIONS说明：</p>
-<pre><code>-f :指定返回值的模板文件。
-</code></pre>
-<p><strong>实例</strong></p>
-<p>显示 Docker 版本信息。</p>
-<pre><code>$ docker versionClient: Version:      1.8.2 API version:  1.20 Go version:   go1.4.2 Git commit:   0a8c2e3 Built:        Thu Sep 10 19:19:00 UTC 2015 OS/Arch:      linux/amd64Server: Version:      1.8.2 API version:  1.20 Go version:   go1.4.2 Git commit:   0a8c2e3 Built:        Thu Sep 10 19:19:00 UTC 2015 OS/Arch:      linux/amd64
-</code></pre>
-</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>ZJX</li><li class="post-copyright-link"><strong>Post link: </strong><a href="https://zzzjx0912.github.io/2021/09/18/Docker/" title="Docker">https://zzzjx0912.github.io/2021/09/18/Docker/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2021/10/25/JSAPI/" rel="prev" title="JSAPI"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">JSAPI</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/08/27/webSocket/" rel="next" title="webSocket"><span class="post-nav-text">webSocket</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> ZJX</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v6.1.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.11</span></div><div class="live-time"><span>本博客已艰辛地运行</span><span id="display_live_time"></span><span class="moe-text">(ง •_•)ง</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2020-07-12T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = ` ${passDay} Days ${passHour} Hours ${passMinute} Minutes ${passSecond} Seconds`;
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div><div id="busuanzi"><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>function initMourn() {
-  const date = new Date();
-  const today = (date.getMonth() + 1) + "-" + date.getDate()
-  const mourn_days = ["4-4","9-18"]
-  if (mourn_days.includes(today)) {
-    document.documentElement.style.filter = "grayscale(1)";
-  }
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
 }
-initMourn();</script></div></body></html>
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 0.5rem 5rem 1rem 5rem;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+mobile()
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}
